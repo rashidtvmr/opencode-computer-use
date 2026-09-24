@@ -3,7 +3,7 @@
 A dual-generation OpenCode plugin that provides a Codex-style Computer Use
 session.
 
-Documentation: https://rashidtvmr.github.io/opencode-computer-use/
+Documentation: https://opencode-computer-use.pages.dev/
 
 The model does not receive a pile of low-level desktop MCP tools. It receives a
 small persistent JavaScript tool surface, matching the way Codex Computer Use
