@@ -1,0 +1,51 @@
+{
+  "name": "opencode-computer-use",
+  "version": "0.1.0",
+  "description": "A dual OpenCode and OpenCode2 plugin for local cross-platform desktop control.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rashidtvmr/opencode-computer-use.git"
+  },
+  "homepage": "https://rashidtvmr.github.io/opencode-computer-use/",
+  "bugs": {
+    "url": "https://github.com/rashidtvmr/opencode-computer-use/issues"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "computer-use",
+    "cua",
+    "mcp"
+  ],
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./server": "./index.js"
+  },
+  "bin": {
+    "opencode-computer-use-repl": "./bin/opencode-computer-use-repl.js"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "docs/",
+    "index.js",
+    "README.md",
+    "SECURITY.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "lint": "node --check index.js && node --check bin/opencode-computer-use-repl.js && node --check lib/backend.js && node --check lib/json-line-peer.mjs && node --check lib/options.js && node --check lib/output.mjs && node --check lib/repl.mjs && node --check lib/repl-kernel.mjs && node --check lib/sandbox.mjs",
+    "test": "node --test"
+  },
+  "optionalDependencies": {
+    "open-computer-use": "0.3.5"
+  },
+  "sideEffects": false
+}
