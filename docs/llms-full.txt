@@ -83,6 +83,14 @@ and notifications.
 6. Install
 Published package:
   npm install @frontendxlab/opencode-computer-use
+The package postinstall step detects OpenCode 1 versus OpenCode2 and local
+versus global installation, edits JSONC without dropping comments, and is
+idempotent. If both generations are ambiguous it makes no change and prints
+manual instructions. Run it explicitly with npx opencode-computer-use-setup;
+use --local, --global, --v1, or --v2 to choose explicitly. If pnpm reports
+ERR_PNPM_IGNORED_BUILDS, approve the package once with pnpm approve-builds
+@frontendxlab/opencode-computer-use, or run pnpm exec
+opencode-computer-use-setup manually.
 OpenCode 1 (opencode.json or opencode.jsonc, plugin list):
   { "$schema": "https://opencode.ai/config.json",
     "plugin": [["@frontendxlab/opencode-computer-use", { "backend": "auto" }]] }
@@ -126,8 +134,11 @@ before high-risk use. Manual read-only checks before acting:
   open-computer-use list-apps
 
 9. Troubleshooting (from the docs page)
-- cua_repl not listed: check the active generation config, restart the TUI,
-  run opencode mcp list, avoid double registration.
+- cua_repl not listed: check the active generation config, restart the TUI or
+  background service after installation, run opencode mcp list, and avoid
+  double registration. For global OpenCode2, run opencode2 plugin add
+  @frontendxlab/opencode-computer-use if the package was installed before
+  automatic setup was available.
 - Node not found: set OPENCODE_NODE or fix server PATH.
 - Empty app list: run open-computer-use list-apps in the same graphical
   session; confirm the app runs and desktop accessibility is available.

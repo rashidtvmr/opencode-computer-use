@@ -23,6 +23,10 @@ sandbox.
   turn-ended notification.
 - Desktop environment variables are allowlisted.
 - Screenshot and text results remain local MCP content.
+- The postinstall setup only adds this package to OpenCode's plugin list, keeps
+  JSONC comments, creates a `.bak` before replacement, and never edits a
+  conflicting or malformed configuration. Ambiguous setup is non-destructive
+  and prints manual instructions.
 
 ## Operator responsibilities
 

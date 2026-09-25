@@ -75,7 +75,7 @@ capabilities remain OS and session dependent.
 
 - Node.js 18 or newer.
 - OpenCode 1.18.29 or newer for the hybrid V1 entrypoint.
-- OpenCode2 V2 for the `setup(ctx)` entrypoint.
+- OpenCode2 V2 beta 19271 or newer for the `setup(ctx)` entrypoint.
 - A signed-in graphical desktop session.
 - macOS Accessibility and Screen Recording permissions.
 - Linux AT-SPI and the input/capture services required by the native runtime.
@@ -91,7 +91,39 @@ local MCP server named `cua_repl` by default.
 
 ```sh
 npm install @frontendxlab/opencode-computer-use
+# or
+pnpm install @frontendxlab/opencode-computer-use
 ```
+
+The package `postinstall` step detects the installed OpenCode generation and
+whether the install is local or global. It safely updates `opencode.json` or
+`opencode.jsonc`, preserves comments and existing settings, and is idempotent.
+When both generations are installed, it uses an existing `plugin` or `plugins`
+configuration to disambiguate. If that is not possible, it makes no change and
+prints both manual configuration formats.
+
+You can run setup explicitly at any time:
+
+```sh
+npx opencode-computer-use-setup
+npx opencode-computer-use-setup --local --v2
+npx opencode-computer-use-setup --global --v1
+```
+
+Use `--dry-run` to inspect the action without changing files. Set
+`OPENCODE_COMPUTER_USE_SKIP_SETUP=1` to disable the postinstall hook. Restart
+OpenCode after a successful setup so the plugin is loaded.
+
+Recent pnpm releases may require explicit approval before running lifecycle
+scripts from dependencies. If pnpm reports `ERR_PNPM_IGNORED_BUILDS`, approve
+this package once and rerun the install:
+
+```sh
+pnpm approve-builds @frontendxlab/opencode-computer-use
+pnpm install
+```
+
+If scripts are intentionally disabled, run `pnpm exec opencode-computer-use-setup` manually instead.
 
 A local checkout can be loaded by replacing the package name with its absolute
 path.
