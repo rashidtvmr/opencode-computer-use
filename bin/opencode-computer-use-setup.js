@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import { copyFileSync, existsSync, mkdirSync, readFileSync, realpathSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { chmodSync, copyFileSync, existsSync, mkdirSync, readFileSync, realpathSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
 import { homedir } from "node:os";
 import { delimiter, dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -189,6 +190,7 @@ function configFlavor(text) {
 }
 
 function existingConfigFiles(root, scope, env = process.env) {
+  if (env.OPENCODE_CONFIG) return [resolve(env.OPENCODE_CONFIG)];
   const bases = scope === "global"
     ? [globalConfigDir(env)]
     : [root, join(root, ".opencode")];
@@ -290,13 +292,27 @@ export function updateConfigText(text, flavor) {
 function writeConfig(file, content, dryRun) {
   if (dryRun) return;
   mkdirSync(dirname(file), { recursive: true });
+  const mode = existsSync(file) ? statSync(file).mode & 0o777 : 0o600;
   if (existsSync(file)) {
-    copyFileSync(file, `${file}.bak`);
+    const backup = `${file}.bak`;
+    copyFileSync(file, backup);
+    chmodSync(backup, mode);
   }
-  const temporary = `${file}.tmp-${process.pid}`;
-  writeFileSync(temporary, content, "utf8");
+  const temporary = `${file}.tmp-${process.pid}-${randomUUID()}`;
+  writeFileSync(temporary, content, { encoding: "utf8", mode, flag: "wx" });
+  chmodSync(temporary, mode);
   if (process.platform === "win32" && existsSync(file)) rmSync(file, { force: true });
   renameSync(temporary, file);
+}
+
+function validateConfigFiles(root, scope, env) {
+  for (const file of existingConfigFiles(root, scope, env)) {
+    const text = readFileSync(file, "utf8");
+    const data = parse(text);
+    if (text.trim() && (data === undefined || data === null || typeof data !== "object" || Array.isArray(data))) {
+      throw new Error(`configuration is not valid JSON or JSONC: ${file}`);
+    }
+  }
 }
 
 function packageAlreadyConfigured(root, scope, env) {
@@ -312,6 +328,12 @@ function packageAlreadyConfigured(root, scope, env) {
   return undefined;
 }
 
+function redactMessage(value) {
+  return String(value)
+    .replace(/\b(token|secret|password|api[_-]?key|authorization)\s*[:=]\s*(?:bearer|basic)?[^\n\r,;]*/giu, "$1=[redacted]")
+    .slice(0, 500);
+}
+
 function runPluginCli(flavor, scope, root, env) {
   const command = flavor === "v1" ? "opencode" : "opencode2";
   const args = ["plugin", "add", PACKAGE_NAME];
@@ -325,7 +347,7 @@ function runPluginCli(flavor, scope, root, env) {
     timeout: 120_000,
   });
   if (result.error || result.status !== 0) {
-    const detail = `${result.stdout || ""}${result.stderr || ""}`.trim().slice(0, 500);
+    const detail = redactMessage(`${result.stdout || ""}${result.stderr || ""}`.trim());
     throw new Error(`${command} plugin add failed${detail ? `: ${detail}` : ""}`);
   }
 }
@@ -388,12 +410,16 @@ export async function setup(options = {}, env = process.env, io = print) {
   const requestedFlavor = options.flavor || "auto";
   const scope = inferScope(requestedScope, env);
   const root = chooseRoot(scope, env);
+  if (env.OPENCODE_CONFIG_CONTENT) {
+    throw new Error("OPENCODE_CONFIG_CONTENT is immutable; add the plugin to that configuration manually");
+  }
   const detection = detectOpenCode(env);
   const config = detectConfigFlavor(root, scope, env);
   const flavor = chooseFlavor(requestedFlavor, detection, config);
   const dryRun = Boolean(options.dryRun);
   let result;
   if (scope === "global" && !dryRun) {
+    validateConfigFiles(root, scope, env);
     const existing = packageAlreadyConfigured(root, scope, env);
     if (existing) {
       result = { file: existing, changed: false };
@@ -406,9 +432,10 @@ export async function setup(options = {}, env = process.env, io = print) {
   } else {
     result = configForSetup(root, scope, flavor, env, dryRun);
   }
-  io(
-    `OpenCode Computer Use setup ${result.changed ? "configured" : "already configured"} for ${flavor.toUpperCase()} (${scope}).`,
-  );
+  const action = options.dryRun
+    ? (result.changed ? "would configure" : "already configured")
+    : (result.changed ? "configured" : "already configured");
+  io(`OpenCode Computer Use setup ${action} for ${flavor.toUpperCase()} (${scope}).`);
   if (result.changed) io(`Configuration: ${result.file}`);
   return { ...result, scope, flavor, detection };
 }
@@ -423,14 +450,6 @@ function isDevelopmentInstall(env) {
 }
 
 export async function main(argv = process.argv.slice(2), env = process.env, io = print) {
-  if (isDevelopmentInstall(env)) {
-    io("OpenCode Computer Use setup skipped for a package-development install.");
-    return 0;
-  }
-  if (env.OPENCODE_COMPUTER_USE_SKIP_SETUP === "1") {
-    io("OpenCode Computer Use setup skipped by OPENCODE_COMPUTER_USE_SKIP_SETUP.");
-    return 0;
-  }
   let options;
   try {
     options = parseArguments(argv);
@@ -441,6 +460,18 @@ export async function main(argv = process.argv.slice(2), env = process.env, io =
   }
   if (options.help) {
     printHelp();
+    return 0;
+  }
+  if (env.CI === "true" || env.CI === "1") {
+    io("OpenCode Computer Use setup skipped in CI.");
+    return 0;
+  }
+  if (isDevelopmentInstall(env)) {
+    io("OpenCode Computer Use setup skipped for a package-development install.");
+    return 0;
+  }
+  if (env.OPENCODE_COMPUTER_USE_SKIP_SETUP === "1") {
+    io("OpenCode Computer Use setup skipped by OPENCODE_COMPUTER_USE_SKIP_SETUP.");
     return 0;
   }
   return setup(options, env, io)

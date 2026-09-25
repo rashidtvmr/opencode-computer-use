@@ -1,6 +1,6 @@
 {
   "name": "@frontendxlab/opencode-computer-use",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A dual OpenCode and OpenCode2 plugin for local cross-platform desktop control.",
   "license": "MIT",
   "repository": {

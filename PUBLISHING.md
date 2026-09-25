@@ -24,7 +24,7 @@ npm pack --dry-run
 ```
 
 `prepublishOnly` runs `lint` plus `test` automatically on `npm publish`.
-Both pass headless (37 tests, no desktop session needed).
+Both pass headless (39 tests, no desktop session needed).
 
 ## 2. Version
 
@@ -66,6 +66,7 @@ optional dependency and is not bundled into this package.
   platforms without its native binaries still succeed.
 - The `postinstall` setup is best-effort. It never fails the package install;
   ambiguous detection prints manual V1/V2 instructions and leaves config alone.
+  CI environments skip the hook.
   pnpm 10 and newer may require `pnpm approve-builds @frontendxlab/opencode-computer-use` before lifecycle scripts are allowed.
 - `engines` requires Node >= 18 and supports the OpenCode2 beta line.
 - Docs site (Cloudflare Pages, https://opencode-computer-use.pages.dev/)

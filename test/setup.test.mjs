@@ -6,6 +6,7 @@ import { tmpdir } from "node:os";
 import { parse as parseJsonc } from "jsonc-parser";
 import {
   FALLBACK_INSTRUCTIONS,
+  configFiles,
   globalConfigDir,
   inferScope,
   main,
@@ -84,6 +85,22 @@ test("creates an idempotent local configuration", async () => {
   }
 });
 
+test("honors an explicit OpenCode config path and protects inline config", async () => {
+  const project = temporaryProject();
+  const custom = join(project, "custom.opencode.jsonc");
+  try {
+    assert.deepEqual(configFiles(project, "local", { OPENCODE_CONFIG: custom }), [custom]);
+    await assert.rejects(
+      setup({ scope: "local", flavor: "v2" }, { INIT_CWD: project, PATH: "", OPENCODE_CONFIG_CONTENT: "{}" }, quiet),
+      /OPENCODE_CONFIG_CONTENT is immutable/,
+    );
+    await setup({ scope: "local", flavor: "v2" }, { INIT_CWD: project, PATH: "", OPENCODE_CONFIG: custom }, quiet);
+    assert.deepEqual(JSON.parse(readFileSync(custom, "utf8")).plugins, ["@frontendxlab/opencode-computer-use"]);
+  } finally {
+    rmSync(project, { recursive: true, force: true });
+  }
+});
+
 test("uses package-manager scope and platform-specific global paths", () => {
   assert.equal(inferScope("auto", { npm_config_global: "true" }), "global");
   assert.equal(inferScope("auto", {}), "local");
@@ -112,6 +129,19 @@ test("missing CLIs produce a non-destructive fallback", async () => {
     assert.equal(code, 0);
     assert.match(output.join("\n"), /neither opencode nor opencode2 was found/);
     assert.match(output.join("\n"), /For OpenCode 1/);
+    assert.equal(existsSync(join(project, "opencode.json")), false);
+  } finally {
+    rmSync(project, { recursive: true, force: true });
+  }
+});
+
+test("does not mutate configuration in CI", async () => {
+  const project = temporaryProject();
+  const output = [];
+  try {
+    const code = await main(["--auto"], { CI: "true", INIT_CWD: project, PATH: "" }, (text, stream) => output.push(`${stream}:${text}`));
+    assert.equal(code, 0);
+    assert.match(output.join("\n"), /skipped in CI/);
     assert.equal(existsSync(join(project, "opencode.json")), false);
   } finally {
     rmSync(project, { recursive: true, force: true });

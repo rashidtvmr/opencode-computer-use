@@ -111,8 +111,9 @@ npx opencode-computer-use-setup --global --v1
 ```
 
 Use `--dry-run` to inspect the action without changing files. Set
-`OPENCODE_COMPUTER_USE_SKIP_SETUP=1` to disable the postinstall hook. Restart
-OpenCode after a successful setup so the plugin is loaded.
+`OPENCODE_COMPUTER_USE_SKIP_SETUP=1` to disable the postinstall hook. Setup also
+skips automatically when `CI=1` or `CI=true`. Restart OpenCode after a
+successful setup so the plugin is loaded.
 
 Recent pnpm releases may require explicit approval before running lifecycle
 scripts from dependencies. If pnpm reports `ERR_PNPM_IGNORED_BUILDS`, approve
