@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createInterface } from "node:readline";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -80,12 +82,67 @@ test("OpenCode MCP surface is js and js_reset and executes cua code", async () =
       name: "js",
       arguments: {
         code: 'var apps = await cua.listApps({ emit: false }); nodeRepl.write(JSON.stringify(apps));',
+        title: "Inspect available apps",
       },
     });
     assert.equal(call.result.isError, false);
+    assert.equal(call.result._meta.title, "Inspect available apps");
     assert.match(call.result.content.at(-1).text, /com\.example\.Text/);
   } finally {
     repl.child.kill("SIGTERM");
+  }
+});
+
+test("read-only safety mode changes annotations and blocks mutations", async () => {
+  const repl = startRepl({ OPENCODE_COMPUTER_USE_SAFETY_MODE: "read-only" });
+  try {
+    await repl.request("initialize", {
+      protocolVersion: "2025-06-18",
+      capabilities: {},
+      clientInfo: { name: "test", version: "1" },
+    });
+    const list = await repl.request("tools/list");
+    assert.equal(list.result.tools[0].annotations.readOnlyHint, true);
+    assert.equal(list.result.tools[0].annotations.destructiveHint, false);
+    const call = await repl.request("tools/call", {
+      name: "js",
+      arguments: { code: 'var app = await cua.getApp("Text"); await app.click(1);' },
+    });
+    assert.equal(call.result.isError, true);
+    assert.match(call.result.content.at(-1).text, /mutating CUA method disabled/);
+  } finally {
+    repl.child.kill("SIGTERM");
+  }
+});
+
+test("notifies the native runtime before shutdown", async () => {
+  const nativeTemp = await mkdtemp(join(tmpdir(), "ocu-native-"));
+  const marker = join(nativeTemp, "ocu-native-notifications.jsonl");
+  const repl = startRepl({ TMPDIR: nativeTemp, TEMP: nativeTemp, TMP: nativeTemp });
+  try {
+    await repl.request("initialize", {
+      protocolVersion: "2025-06-18",
+      capabilities: {},
+      clientInfo: { name: "test", version: "1" },
+    });
+    repl.child.kill("SIGTERM");
+    let notification;
+    const deadline = Date.now() + 2_000;
+    while (!notification && Date.now() < deadline) {
+      try {
+        const lines = (await readFile(marker, "utf8")).trim().split("\n").filter(Boolean);
+        notification = lines.length ? JSON.parse(lines.at(-1)) : undefined;
+        if (!notification) await new Promise((resolve) => setTimeout(resolve, 10));
+      } catch {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+    }
+    assert.ok(notification, "native runtime did not receive turn-ended notification");
+    assert.equal(notification.method, "notifications/turn-ended");
+    assert.equal(notification.params.reason, "signal");
+  } finally {
+    repl.child.kill("SIGTERM");
+    await rm(nativeTemp, { recursive: true, force: true });
   }
 });
 

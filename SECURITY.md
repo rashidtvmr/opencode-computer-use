@@ -16,6 +16,11 @@ sandbox.
   imports, code generation, and dynamic host objects are unavailable in the
   model-facing context.
 - Native calls are serialized through the persistent session.
+- `safetyMode: "read-only"` blocks mutating CUA methods before native execution.
+- `appAccess` can deny apps by exact name or ID before native access.
+- App bindings, output items, text, images, and native frames are bounded.
+- Native timeouts send a cancellation notification; shutdown sends a best-effort
+  turn-ended notification.
 - Desktop environment variables are allowlisted.
 - Screenshot and text results remain local MCP content.
 

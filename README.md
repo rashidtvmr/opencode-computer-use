@@ -141,11 +141,32 @@ automatic plugin discovery. That loads the session twice.
 | `command` | none | Required for `custom`; a native MCP executable followed by argv. |
 | `serverName` | `cua_repl` | MCP server name. |
 | `override` | `false` | Replace an existing MCP server with the same name. |
+| `safetyMode` | `full` | `full` or `read-only`; read-only blocks click, drag, key, scroll, text, value, and secondary actions. |
+| `appAccess` | allow all | Optional `default`, `allow`, and `deny` rules matched against app names and IDs. |
 | `timeoutMs` | `30000` | Default and maximum JavaScript evaluation timeout. |
 | `disabled` | `false` | Register the server disabled. |
 | `maxTextChars` | `200000` | Aggregate text budget for one tool result. |
 | `maxImageBytes` | `2097152` | Aggregate image payload budget for one tool result. |
 | `allowGlobalPointerFallbacks` | `false` | Explicitly allow native global pointer fallback for coordinate clicks and drags. |
+
+For a deny-by-default desktop policy, configure the adapter explicitly:
+
+```json
+{
+  "safetyMode": "read-only",
+  "appAccess": {
+    "default": "deny",
+    "allow": ["com.apple.TextEdit", "Text"],
+    "deny": ["com.apple.Safari"]
+  }
+}
+```
+
+App rules are exact, case-insensitive matches against app names and IDs. They
+are defense in depth and do not replace macOS Accessibility and Screen Recording,
+Linux AT-SPI, Windows UIA, or OpenCode approval settings. The read-only mode
+also changes the MCP annotations for `js` so hosts can apply their normal
+read-only approval policy.
 
 The proxy reads corresponding `OPENCODE_COMPUTER_USE_*` environment variables
 when launched directly.
@@ -241,6 +262,11 @@ dynamic host objects, and arbitrary shell execution are not available through
 the model-facing session. The native
 `run_shell` operation is not part of the Codex-style `cua` API. Do not add an
 arbitrary shell escape to the JavaScript session.
+
+The adapter bounds persistent app bindings and output items, sends a native
+cancellation notification when a request times out, and sends a best-effort
+`notifications/turn-ended` message during shutdown. These are reliability and
+cleanup safeguards, not a replacement for host approvals.
 
 ## Documentation WebMCP preview
 

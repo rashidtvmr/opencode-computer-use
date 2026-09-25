@@ -10,6 +10,8 @@ test("normalizes Codex-style session defaults", () => {
     allowGlobalPointerFallbacks: false,
     override: false,
     serverName: "cua_repl",
+    safetyMode: "full",
+    appAccess: { default: "allow", allow: [], deny: [] },
     timeoutMs: 30_000,
     maxTextChars: 200_000,
     maxImageBytes: 2 * 1024 * 1024,
@@ -32,6 +34,19 @@ test("round trips plugin options through the REPL environment", () => {
     optionsToEnvironment(normalizeOptions({ allowGlobalPointerFallbacks: true })).OPEN_COMPUTER_USE_ALLOW_GLOBAL_POINTER_FALLBACKS,
     "1",
   );
+  assert.deepEqual(
+    normalizeOptions({
+      safetyMode: "read-only",
+      appAccess: { default: "deny", allow: ["Text", "com.apple.TextEdit"], deny: ["com.apple.Safari"] },
+    }),
+    {
+      ...normalizeOptions(),
+      safetyMode: "read-only",
+      appAccess: { default: "deny", allow: ["Text", "com.apple.TextEdit"], deny: ["com.apple.Safari"] },
+    },
+  );
+  assert.throws(() => normalizeOptions({ safetyMode: "unsafe" }), /safetyMode/);
+  assert.throws(() => normalizeOptions({ appAccess: { default: "sometimes" } }), /appAccess\.default/);
 });
 
 test("rejects invalid server names", () => {

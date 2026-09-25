@@ -68,14 +68,17 @@ state.
 5. Options
 backend (default auto: auto, native, or custom); command (required for
 custom: fixed native MCP executable plus argv, no shell syntax); serverName
-(default cua_repl); override (default false); timeoutMs (default 30000);
-disabled (default false); maxTextChars (default 200000); maxImageBytes
-(default 2097152); allowGlobalPointerFallbacks (default false, off because
-it moves the real pointer and changes focus; enable only for an explicit
-desktop automation test where that input is intended). The proxy also reads
-matching OPENCODE_COMPUTER_USE_* environment variables. Custom commands
-must implement the native MCP operations used by cua: initialize,
-tools/list, tools/call, and notifications.
+(default cua_repl); override (default false); safetyMode (default full, or
+read-only to block mutating CUA methods and advertise read-only annotations);
+appAccess (default allow all, with optional exact-name and ID allow/deny
+rules); timeoutMs (default 30000); disabled (default false); maxTextChars
+(default 200000); maxImageBytes (default 2097152);
+allowGlobalPointerFallbacks (default false, off because it moves the real
+pointer and changes focus; enable only for an explicit desktop automation
+test where that input is intended). The proxy also reads matching
+OPENCODE_COMPUTER_USE_* environment variables. Custom commands must implement
+the native MCP operations used by cua: initialize, tools/list, tools/call,
+and notifications.
 
 6. Install
 Published package:
@@ -110,13 +113,15 @@ desktop validation.
 
 8. Safety
 High-privilege desktop-control surface. The js tool is marked conservatively
-as mutating. Keep OpenCode approval prompts enabled for consequential
-actions (sending, deleting, purchasing, uploading, changing permissions).
-Do not expose the session to an untrusted model or run it unattended
-against password managers, banking, administrator, or other high-value
-applications. Screenshots, accessibility trees, and typed values can contain
-sensitive data and should stay local. Read SECURITY.md before high-risk
-use. Manual read-only checks before acting:
+as mutating in full mode and read-only in read-only mode. The adapter also
+bounds app bindings, sends native cancellation on timeouts, and sends a
+best-effort turn-ended notification during shutdown. Keep OpenCode approval
+prompts enabled for consequential actions (sending, deleting, purchasing,
+uploading, changing permissions). Do not expose the session to an untrusted
+model or run it unattended against password managers, banking, administrator,
+or other high-value applications. Screenshots, accessibility trees, and typed
+values can contain sensitive data and should stay local. Read SECURITY.md
+before high-risk use. Manual read-only checks before acting:
   open-computer-use doctor
   open-computer-use list-apps
 

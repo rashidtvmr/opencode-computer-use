@@ -185,6 +185,61 @@ test("cua.listApps returns structured apps and app bindings persist", async () =
   assert.equal(native.calls[2].arguments.click_method, "accessibility");
 });
 
+test("enforces read-only mode and app access policy before native mutation", async () => {
+  const native = mockNative();
+  const session = new PersistentJavaScriptSession({
+    native,
+    safetyMode: "read-only",
+    appAccess: { default: "allow", allow: ["Text"], deny: ["Locked"] },
+  });
+  const blocked = await session.run(`
+    var app = await cua.getApp("Text");
+    try { await app.click(7); } catch (error) { nodeRepl.write(error.message); }
+  `);
+  assert.equal(blocked.isError, false);
+  assert.match(blocked.content.at(-1).text, /mutating CUA method disabled in read-only safety mode/);
+  assert.equal(native.calls.some((call) => call.name === "click"), false);
+
+  const denied = await session.run(`
+    try { await cua.getApp("Locked"); } catch (error) { nodeRepl.write(error.message); }
+  `);
+  assert.match(denied.content.at(-1).text, /app access denied by policy/);
+  assert.equal(native.calls.filter((call) => call.name === "get_app_state").length, 1);
+
+  const readOnlyTool = toolDefinitions(30_000, { safetyMode: "read-only" })[0];
+  assert.equal(readOnlyTool.annotations.readOnlyHint, true);
+  assert.equal(readOnlyTool.annotations.destructiveHint, false);
+});
+
+test("resolves app IDs when enforcing a deny rule", async () => {
+  const native = mockNative();
+  const session = new PersistentJavaScriptSession({
+    native,
+    appAccess: { default: "allow", allow: [], deny: ["com.example.Text"] },
+  });
+  const result = await session.run(`
+    try { await cua.getApp("Text"); } catch (error) { nodeRepl.write(error.message); }
+  `);
+  assert.match(result.content.at(-1).text, /app access denied by policy/);
+  assert.equal(native.calls.some((call) => call.name === "get_app_state"), false);
+});
+
+test("bounds persistent app bindings until reset", async () => {
+  const native = mockNative();
+  const session = new PersistentJavaScriptSession({ native });
+  const result = await session.run(`
+    for (let index = 0; index < 129; index += 1) {
+      try { await cua.getApp("Text"); } catch (error) { nodeRepl.write(error.message); break; }
+    }
+  `);
+  assert.equal(result.isError, false);
+  assert.equal(native.calls.filter((call) => call.name === "get_app_state").length, 128);
+  assert.equal(result.content.length, 128);
+  session.reset();
+  const afterReset = await session.run('await cua.getApp("Text"); nodeRepl.write("ok");');
+  assert.equal(afterReset.isError, false);
+});
+
 test("top-level bindings persist until reset and errors are catchable", async () => {
   const session = new PersistentJavaScriptSession({ native: mockNative() });
   await session.run("var answer = 41;");
@@ -242,6 +297,35 @@ test("JsonLinePeer initializes and correlates native MCP responses", async () =>
   peer.closed = true;
 });
 
+test("notifies the native runtime when a request times out", async () => {
+  const child = new EventEmitter();
+  child.stdout = new PassThrough();
+  child.stderr = new PassThrough();
+  child.stdin = new PassThrough();
+  child.kill = () => {};
+  const messages = [];
+  child.stdin.setEncoding("utf8");
+  child.stdin.on("data", (chunk) => {
+    for (const line of String(chunk).split("\n").filter(Boolean)) {
+      const message = JSON.parse(line);
+      messages.push(message);
+      if (message.method === "initialize") {
+        child.stdout.write(`${JSON.stringify({ jsonrpc: "2.0", id: message.id, result: { ok: true } })}\n`);
+      }
+    }
+  });
+  const peer = new JsonLinePeer({ child });
+  await peer.initialize();
+  await assert.rejects(
+    peer.request("tools/call", { name: "click" }, 5),
+    /timed out.*native action may still be settling/,
+  );
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  const cancellation = messages.find((message) => message.method === "notifications/cancelled");
+  assert.deepEqual(cancellation.params, { requestId: 2, reason: "timeout" });
+  peer.closed = true;
+});
+
 test("terminates the owned child when the native peer fails", async () => {
   const child = new EventEmitter();
   child.stdout = new PassThrough();
@@ -254,6 +338,7 @@ test("terminates the owned child when the native peer fails", async () => {
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(peer.closed, true);
   assert.ok(signals.includes("SIGTERM"));
+  await assert.rejects(peer.request("tools/list"), /closed.*restart the MCP server/i);
 });
 
 test("worker session terminates CPU-bound code and recovers", async () => {

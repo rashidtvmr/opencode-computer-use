@@ -1,4 +1,10 @@
+import { appendFileSync } from "node:fs";
 import { createInterface } from "node:readline";
+import { join } from "node:path";
+
+const notificationFile = process.env.TMPDIR || process.env.TEMP || process.env.TMP
+  ? join(process.env.TMPDIR || process.env.TEMP || process.env.TMP, "ocu-native-notifications.jsonl")
+  : undefined;
 
 const lines = createInterface({ input: process.stdin });
 const send = (message) => process.stdout.write(`${JSON.stringify(message)}\n`);
@@ -47,6 +53,13 @@ lines.on("line", (line) => {
   }
   if (message.method === "tools/list") {
     send({ jsonrpc: "2.0", id: message.id, result: { tools } });
+    return;
+  }
+  if (message.method === "notifications/turn-ended") {
+    if (notificationFile) {
+      appendFileSync(notificationFile, `${JSON.stringify(message)}\n`);
+    }
+    send({ jsonrpc: "2.0", method: "turn-ended-observed", params: message.params });
     return;
   }
   if (message.method === "tools/call") {

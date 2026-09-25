@@ -24,6 +24,8 @@
 - MCP server name: cua_repl. Model-facing tools: js (persistent evaluation) and js_reset (clean session).
 - Async cua API: listApps, getApp, getState, getAXState, getScreenshot, getAXStateAndScreenshot, click, scroll, drag, typeText, pressKey, setValue, performSecondaryAction. Output helpers: nodeRepl.write, nodeRepl.emitImage.
 - WebMCP preview: the docs page registers only read-only search_docs, get_install_config, and get_api_reference tools when document.modelContext is available. It is progressive enhancement, not stable browser support.
+- Safety profiles: safetyMode=read-only blocks mutating CUA methods and changes js annotations; appAccess supports exact-name and ID allow/deny rules.
+- Reliability: app bindings and output are bounded; native timeouts send cancellation; shutdown sends a best-effort turn-ended notification.
 - No arbitrary shell escape. No run_shell in the model-facing API. Restricted VM blocks require, process, fetch, filesystem, dynamic import, and code generation.
 - Published package: @frontendxlab/opencode-computer-use.
 - Requirements: Node.js 18 or newer, OpenCode 1.18.29 or newer (V1) or OpenCode2 V2, plus a signed-in graphical desktop session with OS accessibility and capture permissions.

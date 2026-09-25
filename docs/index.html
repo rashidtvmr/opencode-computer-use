@@ -61,7 +61,7 @@
           "name": "OpenCode Computer Use",
           "description": "A dual-generation OpenCode plugin for local desktop control through a persistent cua_repl JavaScript session.",
           "url": "https://opencode-computer-use.pages.dev/",
-          "softwareVersion": "0.1.0",
+          "softwareVersion": "0.1.1",
           "datePublished": "2026-09-25",
           "dateModified": "2026-09-25",
           "isAccessibleForFree": true,
@@ -548,6 +548,12 @@ await chrome.getAXState({ textLimit: 12000 });</code></pre><button class="copy" 
           <div class="code"><pre><code id="options-json">{
   "backend": "auto",
   "serverName": "cua_repl",
+  "safetyMode": "full",
+  "appAccess": {
+    "default": "allow",
+    "allow": [],
+    "deny": []
+  },
   "timeoutMs": 30000,
   "maxTextChars": 200000,
   "maxImageBytes": 2097152,
@@ -556,6 +562,8 @@ await chrome.getAXState({ textLimit: 12000 });</code></pre><button class="copy" 
           <ul class="cards">
             <li><strong>backend</strong><span><code>auto</code>, <code>native</code>, or a fixed <code>custom</code> command.</span></li>
             <li><strong>serverName</strong><span>Rename the generated MCP server when a project needs isolation.</span></li>
+            <li><strong>safetyMode</strong><span><code>full</code> or <code>read-only</code>. Read-only blocks mutating CUA methods and changes MCP annotations.</span></li>
+            <li><strong>appAccess</strong><span>Optional exact-name and ID allow or deny rules, evaluated before native access.</span></li>
             <li><strong>timeoutMs</strong><span>Bounds JavaScript evaluation. A timeout resets the worker session.</span></li>
             <li><strong>maxTextChars</strong><span>Aggregate text budget for one tool result.</span></li>
             <li><strong>maxImageBytes</strong><span>Aggregate image budget for one tool result.</span></li>
@@ -601,7 +609,10 @@ nodeRepl.write(state);</code></pre><button class="copy" type="button" data-copy=
             <li><strong>No arbitrary shell</strong><span>The model-facing API does not expose <code>run_shell</code> or a host command escape.</span></li>
             <li><strong>Restricted VM</strong><span>Filesystem, process, fetch, dynamic import, code generation, and host built-ins are blocked.</span></li>
             <li><strong>Worker isolation</strong><span>CPU-bound JavaScript can be terminated without wedging the MCP server.</span></li>
-            <li><strong>Bounded transport</strong><span>Input frames, output text, images, content items, and native responses are bounded.</span></li>
+            <li><strong>Read-only mode</strong><span>An opt-in safety profile blocks clicks, keys, text, scroll, drags, and secondary actions before native execution.</span></li>
+            <li><strong>App policy</strong><span>Exact-name and ID allow or deny rules provide adapter-level defense in depth.</span></li>
+            <li><strong>Bounded transport</strong><span>Input frames, output text, images, content items, app bindings, and native responses are bounded.</span></li>
+            <li><strong>Lifecycle cleanup</strong><span>Timeouts send native cancellation, and shutdown sends a best-effort turn-ended notification.</span></li>
             <li><strong>Approval preserving</strong><span>Consequential actions still pass through OpenCode and OS permission boundaries.</span></li>
             <li><strong>Safe defaults</strong><span>Global pointer fallback is disabled until explicitly enabled.</span></li>
           </ul>
@@ -635,7 +646,7 @@ nodeRepl.write(state);</code></pre><button class="copy" type="button" data-copy=
         <strong>Surface map</strong>
         <p>Plugin: <code>opencode-computer-use</code><br>MCP: <code>cua_repl</code><br>Tools: <code>js</code>, <code>js_reset</code></p>
         <strong>Default policy</strong>
-        <p>Local stdio only. Global pointer fallback off. Native OS permissions enforced.</p>
+        <p>Local stdio only. Global pointer fallback off. Native OS permissions enforced. Read-only and app policies are available as adapter defense in depth.</p>
         <strong>Updated</strong>
         <p>Published September 25, 2026. Updated September 25, 2026.</p>
         <strong>WebMCP</strong>
