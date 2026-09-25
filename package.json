@@ -1,5 +1,5 @@
 {
-  "name": "opencode-computer-use",
+  "name": "@frontendxlab/opencode-computer-use",
   "version": "0.1.0",
   "description": "A dual OpenCode and OpenCode2 plugin for local cross-platform desktop control.",
   "license": "MIT",
@@ -10,6 +10,9 @@
   "homepage": "https://opencode-computer-use.pages.dev/",
   "bugs": {
     "url": "https://github.com/rashidtvmr/opencode-computer-use/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "opencode",
@@ -25,7 +28,7 @@
     "./server": "./index.js"
   },
   "bin": {
-    "opencode-computer-use-repl": "./bin/opencode-computer-use-repl.js"
+    "opencode-computer-use-repl": "bin/opencode-computer-use-repl.js"
   },
   "files": [
     "bin/",
@@ -38,11 +41,14 @@
     "THIRD_PARTY_NOTICES.md"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=18",
+    "opencode": ">=1.18.29"
   },
   "scripts": {
     "lint": "node --check index.js && node --check bin/opencode-computer-use-repl.js && node --check lib/backend.js && node --check lib/json-line-peer.mjs && node --check lib/options.js && node --check lib/output.mjs && node --check lib/repl.mjs && node --check lib/repl-kernel.mjs && node --check lib/sandbox.mjs",
-    "test": "node --test"
+    "test": "node --test",
+    "prepack": "node --check index.js && node --check bin/opencode-computer-use-repl.js && node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8'))\"",
+    "prepublishOnly": "npm run lint && npm test"
   },
   "optionalDependencies": {
     "open-computer-use": "0.3.5"

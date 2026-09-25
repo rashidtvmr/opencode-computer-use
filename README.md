@@ -86,8 +86,15 @@ other OS-owned consent surface. It does not bypass permissions.
 
 ## Install
 
-The package can be loaded from a local checkout or installed from npm. The
-plugin registers a local MCP server named `cua_repl` by default.
+The published package is `@frontendxlab/opencode-computer-use`. It registers a
+local MCP server named `cua_repl` by default.
+
+```sh
+npm install @frontendxlab/opencode-computer-use
+```
+
+A local checkout can be loaded by replacing the package name with its absolute
+path.
 
 ### OpenCode 1
 
@@ -97,7 +104,7 @@ plugin registers a local MCP server named `cua_repl` by default.
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    ["./plugins/opencode-computer-use", { "backend": "auto" }]
+    ["@frontendxlab/opencode-computer-use", { "backend": "auto" }]
   ]
 }
 ```
@@ -111,7 +118,7 @@ plugin registers a local MCP server named `cua_repl` by default.
   "$schema": "https://opencode.ai/config.json",
   "plugins": [
     {
-      "package": "./plugins/opencode-computer-use",
+      "package": "@frontendxlab/opencode-computer-use",
       "options": { "backend": "auto" }
     }
   ]
@@ -234,6 +241,18 @@ dynamic host objects, and arbitrary shell execution are not available through
 the model-facing session. The native
 `run_shell` operation is not part of the Codex-style `cua` API. Do not add an
 arbitrary shell escape to the JavaScript session.
+
+## Documentation WebMCP preview
+
+The Cloudflare Pages documentation includes a progressive, read-only WebMCP
+enhancement based on the current `document.modelContext.registerTool()` draft.
+When a supporting browser exposes the API, agents can discover
+`search_docs`, `get_install_config`, and `get_api_reference`. The page remains
+fully usable without WebMCP, and no desktop-control or mutating tool is exposed
+through the documentation site.
+
+WebMCP is experimental. It requires a secure context, the `tools` Permissions
+Policy, and a compatible browser or Cloudflare Browser Run lab session.
 
 ## Manual checks
 

@@ -1,0 +1,7 @@
+# robots.txt for https://opencode-computer-use.pages.dev/
+# Static Cloudflare Pages documentation site. No secrets or tracking.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://opencode-computer-use.pages.dev/sitemap.xml

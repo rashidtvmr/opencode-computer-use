@@ -1,0 +1,30 @@
+# OpenCode Computer Use
+
+> A dual-generation OpenCode plugin that exposes a Codex-style persistent JavaScript session (cua_repl) for local desktop control. The model sees two tools, js and js_reset, backed by the open-source open-computer-use native runtime. OS permissions remain enforced.
+
+## Docs
+
+- [Documentation home](https://opencode-computer-use.pages.dev/)
+- [Install](https://opencode-computer-use.pages.dev/#install)
+- [First run](https://opencode-computer-use.pages.dev/#first-run)
+- [API surface](https://opencode-computer-use.pages.dev/#api)
+- [OS support](https://opencode-computer-use.pages.dev/#os)
+- [WebMCP preview](https://opencode-computer-use.pages.dev/#webmcp)
+- [Security](https://opencode-computer-use.pages.dev/#security)
+- [FAQ](https://opencode-computer-use.pages.dev/#faq)
+
+## Repo
+
+- [Source](https://github.com/rashidtvmr/opencode-computer-use)
+- [README](https://github.com/rashidtvmr/opencode-computer-use/blob/main/README.md)
+- [Issues](https://github.com/rashidtvmr/opencode-computer-use/issues)
+
+## Key facts
+
+- MCP server name: cua_repl. Model-facing tools: js (persistent evaluation) and js_reset (clean session).
+- Async cua API: listApps, getApp, getState, getAXState, getScreenshot, getAXStateAndScreenshot, click, scroll, drag, typeText, pressKey, setValue, performSecondaryAction. Output helpers: nodeRepl.write, nodeRepl.emitImage.
+- WebMCP preview: the docs page registers only read-only search_docs, get_install_config, and get_api_reference tools when document.modelContext is available. It is progressive enhancement, not stable browser support.
+- No arbitrary shell escape. No run_shell in the model-facing API. Restricted VM blocks require, process, fetch, filesystem, dynamic import, and code generation.
+- Published package: @frontendxlab/opencode-computer-use.
+- Requirements: Node.js 18 or newer, OpenCode 1.18.29 or newer (V1) or OpenCode2 V2, plus a signed-in graphical desktop session with OS accessibility and capture permissions.
+- Native runtimes packaged for darwin-arm64, darwin-x64, linux-arm64, linux-x64, win32-arm64, win32-x64. Live smoke tests passed on Linux x64 only; macOS and Windows need on-host validation.

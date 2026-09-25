@@ -1,0 +1,146 @@
+OpenCode Computer Use - full documentation summary
+Canonical site: https://opencode-computer-use.pages.dev/
+Repository: https://github.com/rashidtvmr/opencode-computer-use
+License: MIT
+
+1. What it is
+OpenCode Computer Use is a dual-generation OpenCode plugin that provides a
+Codex-style Computer Use session. Instead of exposing many low-level desktop
+MCP tools, it exposes one persistent JavaScript surface through a local MCP
+server named cua_repl. The model receives two tools only: js (evaluate
+JavaScript in the persistent session) and js_reset (discard bindings and
+start a clean session). App bindings and variables survive across model
+turns. Native desktop calls are made by the underlying open-source
+open-computer-use runtime (optional dependency open-computer-use@0.3.5),
+kept separate from the Codex-style session adapter. The adapter is adapted
+from the MIT-licensed iFurySt/open-codex-computer-use project; see
+THIRD_PARTY_NOTICES.md in the repository.
+
+2. Architecture (three layers)
+- OpenCode plugin: loads the local package and registers cua_repl without
+  exposing raw desktop tools.
+- cua_repl MCP server: persistent JavaScript evaluation, output bounds,
+  request validation, and worker isolation so a timed-out loop cannot wedge
+  the server.
+- Native runtime: open-computer-use runs as a separate child process. OS
+  accessibility, screen capture, and input permissions are enforced there.
+The JavaScript VM is a capability guard, not a complete security boundary.
+
+3. Model workflow
+The js tool accepts code (required JavaScript source), timeout_ms (optional,
+capped at 300 seconds), and title (optional short action title).
+Typical first call:
+  var apps = await cua.listApps({ emit: false });
+  var app = await cua.getApp(apps[0].id);
+  await app.getAXState();
+Typical action and verification:
+  var save = await app.click(12);
+  await app.getAXState();
+State and action rules: read getAXState() or getAXStateAndScreenshot()
+before acting on a new layout; element indexes belong to the most recent
+state and must be re-derived after navigation, dialogs, scroll, resize, or
+rerender; prefer element indexes and semantic actions over coordinates; use
+coordinates only when no useful accessibility data exists; batch
+deterministic actions with the next state read in one js call; never replay
+a mutating action after a timeout or transport failure, observe again and
+decide anew; js_reset discards JavaScript bindings only, not native app
+state.
+
+4. API
+- cua.getState(options?): list current desktop apps with bounded output.
+- cua.listApps(options?): structured app records without emitting by
+  default.
+- cua.getApp(nameOrPid): bind an app and emit initial accessibility state.
+- app.getAXState(options?): fresh semantic accessibility tree.
+- app.getScreenshot(options?): local image bytes, optionally emitted.
+- app.getAXStateAndScreenshot(options?): combined state and image read.
+- app.click(target, options?): element index first, bounded coordinate when
+  necessary.
+- app.scroll(elementIndex, direction, pages?)
+- app.drag([fromX, fromY], [toX, toY])
+- app.typeText(text)
+- app.pressKey(key)
+- app.setValue(elementIndex, value)
+- app.performSecondaryAction(elementIndex, action)
+- nodeRepl.write(value): extra bounded text output.
+- nodeRepl.emitImage(bytesOrDataUrl): bounded local image output.
+
+5. Options
+backend (default auto: auto, native, or custom); command (required for
+custom: fixed native MCP executable plus argv, no shell syntax); serverName
+(default cua_repl); override (default false); timeoutMs (default 30000);
+disabled (default false); maxTextChars (default 200000); maxImageBytes
+(default 2097152); allowGlobalPointerFallbacks (default false, off because
+it moves the real pointer and changes focus; enable only for an explicit
+desktop automation test where that input is intended). The proxy also reads
+matching OPENCODE_COMPUTER_USE_* environment variables. Custom commands
+must implement the native MCP operations used by cua: initialize,
+tools/list, tools/call, and notifications.
+
+6. Install
+Published package:
+  npm install @frontendxlab/opencode-computer-use
+OpenCode 1 (opencode.json or opencode.jsonc, plugin list):
+  { "$schema": "https://opencode.ai/config.json",
+    "plugin": [["@frontendxlab/opencode-computer-use", { "backend": "auto" }]] }
+OpenCode2 V2 (plugins shape):
+  { "$schema": "https://opencode.ai/config.json",
+    "plugins": [{ "package": "@frontendxlab/opencode-computer-use",
+      "options": { "backend": "auto" } }] }
+A local checkout can be used by replacing the package name with its absolute
+path. Do not configure the same package both as an explicit plugin and through
+automatic plugin discovery. If Node is not on PATH, set OPENCODE_NODE to an
+absolute Node executable. Verify with: opencode mcp list.
+
+7. Requirements and OS support
+Requirements: Node.js 18 or newer; OpenCode 1.18.29 or newer (V1) or
+OpenCode2 V2; a signed-in graphical desktop session; macOS Accessibility
+and Screen Recording permissions; Linux AT-SPI plus required input and
+capture services; Windows UI Automation in the interactive desktop session.
+The plugin cannot control lock screens, login screens, UAC secure desktops,
+or other OS-owned consent surfaces, and does not bypass permissions.
+Packaged native targets: darwin-arm64, darwin-x64, linux-arm64, linux-x64,
+win32-arm64, win32-x64. Validation status: Linux x64 read-only discovery,
+app listing, MCP registration, and persistent session passed local smoke
+tests; one Ubuntu/GNOME Wayland session exposed a Chrome pseudo-window with
+no actionable AT-SPI children and synthetic input did not change it (the
+adapter reports the native result honestly); macOS and Windows have not
+been live-tested in this environment and need on-host permission and
+desktop validation.
+
+8. Safety
+High-privilege desktop-control surface. The js tool is marked conservatively
+as mutating. Keep OpenCode approval prompts enabled for consequential
+actions (sending, deleting, purchasing, uploading, changing permissions).
+Do not expose the session to an untrusted model or run it unattended
+against password managers, banking, administrator, or other high-value
+applications. Screenshots, accessibility trees, and typed values can contain
+sensitive data and should stay local. Read SECURITY.md before high-risk
+use. Manual read-only checks before acting:
+  open-computer-use doctor
+  open-computer-use list-apps
+
+9. Troubleshooting (from the docs page)
+- cua_repl not listed: check the active generation config, restart the TUI,
+  run opencode mcp list, avoid double registration.
+- Node not found: set OPENCODE_NODE or fix server PATH.
+- Empty app list: run open-computer-use list-apps in the same graphical
+  session; confirm the app runs and desktop accessibility is available.
+- Screenshots unavailable: OS compositor or permission gap; bounded
+  accessibility text may still work.
+- Linux input returns success but nothing changes: session type or missing
+  runtime prerequisite; observe again before retrying mutating actions.
+- Global pointer fallback rejected: expected safety gate.
+
+10. WebMCP preview
+The documentation page includes a progressive, read-only WebMCP enhancement
+based on the current document.modelContext.registerTool draft. It registers
+search_docs, get_install_config, and get_api_reference only when the browser
+supports the API and the tools Permissions Policy. It does not expose desktop
+control, shell, network mutation, or credentials. WebMCP is experimental and
+should not be treated as stable browser support.
+
+11. Development
+npm install; npm test; npm run lint. Adapter tests use a fake native MCP
+server and need no real desktop. Live desktop validation must run
+separately per OS.

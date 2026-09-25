@@ -3,102 +3,287 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Install and use OpenCode Computer Use, a Codex-style cua_repl plugin for OpenCode and OpenCode2.">
-  <meta name="theme-color" content="#0b1117">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1117'/%3E%3Cpath d='M16 14h32v8H24v8h20v8H24v8h24v8H16z' fill='%23f2bd67'/%3E%3C/svg%3E">
-  <title>OpenCode Computer Use</title>
+  <meta name="description" content="Install OpenCode Computer Use, a local OpenCode plugin that registers cua_repl for persistent JavaScript desktop control, with native runtimes for Linux, macOS, and Windows.">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta name="author" content="rashidtvmr">
+  <meta name="publisher" content="FrontendX Labs">
+  <meta name="application-name" content="OpenCode Computer Use">
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <link rel="canonical" href="https://opencode-computer-use.pages.dev/">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="Machine-readable project summary">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/og-card.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OpenCode Computer Use | cua_repl Plugin Guide">
+  <meta property="og:description" content="Install and use a Codex-style cua_repl desktop-control session in OpenCode and OpenCode2.">
+  <meta property="og:url" content="https://opencode-computer-use.pages.dev/">
+  <meta property="og:site_name" content="OpenCode Computer Use">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://opencode-computer-use.pages.dev/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="OpenCode Computer Use documentation">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OpenCode Computer Use | cua_repl Plugin Guide">
+  <meta name="twitter:description" content="Install and use a Codex-style cua_repl desktop-control session in OpenCode and OpenCode2.">
+  <meta name="twitter:image" content="https://opencode-computer-use.pages.dev/og-card.png">
+  <title>OpenCode Computer Use | cua_repl Plugin Guide</title>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://opencode-computer-use.pages.dev/#organization",
+          "name": "FrontendX Labs",
+          "alternateName": "rashidtvmr",
+          "url": "https://github.com/rashidtvmr",
+          "sameAs": [
+            "https://github.com/rashidtvmr/opencode-computer-use"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://opencode-computer-use.pages.dev/#website",
+          "url": "https://opencode-computer-use.pages.dev/",
+          "name": "OpenCode Computer Use",
+          "description": "Documentation for a local OpenCode plugin with a persistent cua_repl JavaScript desktop-control session.",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://opencode-computer-use.pages.dev/#organization"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://opencode-computer-use.pages.dev/#software",
+          "name": "OpenCode Computer Use",
+          "description": "A dual-generation OpenCode plugin for local desktop control through a persistent cua_repl JavaScript session.",
+          "url": "https://opencode-computer-use.pages.dev/",
+          "softwareVersion": "0.1.0",
+          "datePublished": "2026-09-25",
+          "dateModified": "2026-09-25",
+          "isAccessibleForFree": true,
+          "downloadUrl": "https://www.npmjs.com/package/@frontendxlab/opencode-computer-use",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Linux, macOS, Windows",
+          "softwareRequirements": "Node.js 18 or newer; OpenCode 1.18.29 or newer or OpenCode2 V2; a signed-in graphical desktop session.",
+          "codeRepository": "https://github.com/rashidtvmr/opencode-computer-use",
+          "license": "https://github.com/rashidtvmr/opencode-computer-use/blob/main/LICENSE",
+          "featureList": [
+            "Local stdio MCP server named cua_repl",
+            "Persistent JavaScript session with app bindings",
+            "Accessibility-state and screenshot inspection",
+            "Element-first desktop actions"
+          ],
+          "author": {
+            "@id": "https://opencode-computer-use.pages.dev/#organization"
+          },
+          "publisher": {
+            "@id": "https://opencode-computer-use.pages.dev/#organization"
+          },
+          "isPartOf": {
+            "@id": "https://opencode-computer-use.pages.dev/#website"
+          }
+        },
+        {
+          "@type": "TechArticle",
+          "@id": "https://opencode-computer-use.pages.dev/#article",
+          "headline": "OpenCode Computer Use: Codex-style desktop control for OpenCode",
+          "description": "Setup, API, security, operating-system, and troubleshooting guidance for the OpenCode Computer Use plugin.",
+          "datePublished": "2026-09-25",
+          "dateModified": "2026-09-25",
+          "url": "https://opencode-computer-use.pages.dev/",
+          "inLanguage": "en",
+          "articleSection": "Developer tools",
+          "keywords": [
+            "OpenCode plugin",
+            "cua_repl",
+            "Model Context Protocol",
+            "JavaScript desktop control",
+            "computer use"
+          ],
+          "mainEntityOfPage": {
+            "@id": "https://opencode-computer-use.pages.dev/#website"
+          },
+          "about": {
+            "@id": "https://opencode-computer-use.pages.dev/#software"
+          },
+          "author": {
+            "@id": "https://opencode-computer-use.pages.dev/#organization"
+          },
+          "publisher": {
+            "@id": "https://opencode-computer-use.pages.dev/#organization"
+          },
+          "isPartOf": {
+            "@id": "https://opencode-computer-use.pages.dev/#website"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://opencode-computer-use.pages.dev/#faq",
+          "url": "https://opencode-computer-use.pages.dev/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Is OpenCode Computer Use a plugin, an MCP server, or both?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Both layers are present. The OpenCode plugin loads the local package and registers an MCP server named cua_repl. That server exposes only js and js_reset to the model."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What do js and js_reset do?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "js evaluates JavaScript in the persistent session, so variables and app bindings survive between calls. js_reset discards those bindings but does not reset native application state."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Which operating systems are supported?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Optional native runtime packages target Linux, macOS, and Windows on x64 and arm64. Live capabilities depend on OS permissions, the desktop session, and the target app; macOS and Windows still require live validation."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does the plugin bypass operating-system permissions?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. It cannot control a lock screen, login screen, or UAC secure desktop. OpenCode approvals and operating-system permissions remain the enforcement layer."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does the model get raw desktop tools or an arbitrary shell?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. The model sees only js and js_reset, not raw desktop tools or run_shell. The restricted JavaScript session also blocks filesystem, process, fetch, dynamic import, and code-generation access."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I verify the installation?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Restart OpenCode or reopen the TUI, run opencode mcp list, and confirm that cua_repl is connected before starting a desktop task."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  </script>
   <script>
-    document.documentElement.dataset.theme = localStorage.getItem("computer-use-theme") || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    document.documentElement.dataset.theme = localStorage.getItem("computer-use-theme") || "dark";
   </script>
   <style>
-    :root {
-      --bg: #0b1117;
-      --panel: #121c24;
-      --panel-2: #17242d;
-      --text: #e9f1ee;
-      --muted: #91a2aa;
-      --faint: #60737d;
-      --line: #263943;
-      --signal: #f2bd67;
-      --signal-2: #ffdb9b;
-      --mint: #8bdfc1;
-      --blue: #8bc9e8;
+    :root,
+    [data-theme="dark"] {
+      --bg: #0a0a0a;
+      --panel: #171717;
+      --panel-2: #222222;
+      --text: #ededed;
+      --muted: #a1a1a1;
+      --faint: #8a8a8a;
+      --line: #333333;
+      --line-strong: #555555;
+      --signal: #3b82f6;
+      --signal-2: #60a5fa;
+      --mint: #34d399;
+      --blue: #60a5fa;
       --danger: #ff9188;
-      --code: #f5d59a;
-      --shadow: rgba(0, 0, 0, .28);
+      --code: #93c5fd;
+      --gradient: linear-gradient(90deg, #8657a7 0%, #cd3678 24%, #ff1e56 44%, #3f79d5 74%, #0196ff 100%);
+      --shadow: rgba(0, 0, 0, .4);
+      --shadow-sm: 0 2px 10px rgba(0, 0, 0, .3);
+      --shadow-md: 0 16px 44px rgba(0, 0, 0, .4);
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --nav: "Montserrat Alternates", var(--sans);
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
       color-scheme: dark;
-      font: 16px/1.65 "IBM Plex Sans", "Avenir Next", Avenir, ui-sans-serif, system-ui, sans-serif;
+      font: 16px/1.65 var(--sans);
     }
 
     :root[data-theme="light"] {
-      --bg: #f4f6f3;
-      --panel: #ffffff;
-      --panel-2: #e9efeb;
-      --text: #142027;
-      --muted: #53666e;
-      --faint: #819198;
-      --line: #d2ded9;
-      --signal: #9a6400;
-      --signal-2: #6e4700;
-      --mint: #176b58;
-      --blue: #176080;
-      --danger: #9d3029;
-      --code: #704900;
-      --shadow: rgba(31, 52, 59, .12);
+      --bg: #ffffff;
+      --panel: #fafafa;
+      --panel-2: #f5f5f5;
+      --text: #171717;
+      --muted: #737373;
+      --faint: #a3a3a3;
+      --line: #e5e5e5;
+      --line-strong: #a3a3a3;
+      --signal: #2563eb;
+      --signal-2: #1d4ed8;
+      --mint: #047857;
+      --blue: #2563eb;
+      --danger: #b91c1c;
+      --code: #1d4ed8;
+      --gradient: linear-gradient(90deg, #8657a7 0%, #cd3678 24%, #ff1e56 44%, #3f79d5 74%, #0196ff 100%);
+      --shadow: rgba(0, 0, 0, .12);
+      --shadow-sm: 0 2px 10px rgba(0, 0, 0, .08);
+      --shadow-md: 0 16px 44px rgba(0, 0, 0, .12);
       color-scheme: light;
     }
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; background: var(--bg); }
-    body { margin: 0; color: var(--text); background: var(--bg); }
+    body { margin: 0; overflow-x: hidden; color: var(--text); background: var(--bg); }
     body::before {
       position: fixed;
       inset: 0;
       z-index: -1;
       pointer-events: none;
       content: "";
-      opacity: .22;
-      background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: linear-gradient(to bottom, black, transparent 72%);
+      background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(134, 87, 167, .18), transparent 72%);
     }
     a { color: inherit; }
     button, input { font: inherit; }
-    button, .button { min-height: 42px; padding: 0 14px; border: 1px solid var(--line); border-radius: 9px; color: var(--text); background: var(--panel); cursor: pointer; }
+    button, .button { min-height: 42px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; color: var(--text); background: var(--panel); cursor: pointer; }
     button:hover, .button:hover { border-color: var(--signal); }
     button:active, .button:active { transform: translateY(1px); }
-    :focus-visible { outline: 3px solid color-mix(in srgb, var(--signal) 78%, transparent); outline-offset: 3px; }
+    :focus-visible { outline: 3px solid color-mix(in srgb, var(--signal) 50%, transparent); outline-offset: 3px; }
     .button { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
-    .button.primary { border-color: var(--signal); color: #17130b; background: var(--signal); font-weight: 750; }
-    [data-theme="light"] .button.primary { color: #fffaf0; background: var(--signal); }
+    .button.primary { border-color: var(--text); color: #171717; background: var(--text); font-weight: 750; }
+    [data-theme="light"] .button.primary { border-color: #171717; color: #ffffff; background: #171717; }
     .skip { position: fixed; top: 8px; left: 8px; z-index: 20; padding: 10px 14px; color: var(--bg); background: var(--text); transform: translateY(-150%); }
     .skip:focus { transform: none; }
 
-    .top { position: sticky; top: 0; z-index: 10; border-bottom: 1px solid color-mix(in srgb, var(--line) 78%, transparent); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(18px); }
-    .top-inner { display: flex; align-items: center; gap: 24px; width: min(1240px, calc(100% - 44px)); height: 66px; margin: auto; }
-    .mark { font-weight: 800; letter-spacing: -.045em; text-decoration: none; }
-    .mark span { color: var(--signal); }
+    .top { position: fixed; top: 8px; left: 16px; right: 16px; z-index: 10; width: min(1100px, calc(100% - 32px)); margin: auto; border: 1px solid color-mix(in srgb, var(--line) 80%, transparent); border-radius: 24px; background: color-mix(in srgb, var(--panel-2) 88%, transparent); box-shadow: 0 6px 28px rgba(0, 0, 0, .22); backdrop-filter: blur(20px); }
+    .top-inner { display: flex; align-items: center; gap: 24px; width: 100%; height: 52px; margin: auto; padding: 0 16px; }
+    .mark { min-width: 0; font: 750 14.5px/1 var(--nav); letter-spacing: -.02em; text-decoration: none; white-space: nowrap; }
+    .mark span { color: var(--signal-2); }
     .top nav { display: flex; gap: 20px; margin-left: auto; }
-    .top nav a { color: var(--muted); font-size: 14px; text-decoration: none; }
+    .top nav a { color: color-mix(in srgb, var(--text) 58%, transparent); font: 500 14.5px/1 var(--nav); text-decoration: none; }
     .top nav a:hover { color: var(--text); }
-    #theme { min-height: 36px; padding-inline: 11px; font-size: 13px; }
+    #theme { min-height: 36px; padding-inline: 11px; font-size: 13px; white-space: nowrap; }
 
-    .hero { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(360px, .98fr); gap: clamp(42px, 7vw, 110px); align-items: center; width: min(1240px, calc(100% - 44px)); min-height: calc(100dvh - 66px); margin: auto; padding: 82px 0 92px; }
-    .eyebrow { margin: 0; color: var(--signal); font: 750 12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .16em; text-transform: uppercase; }
-    h1 { max-width: 760px; margin: 17px 0 23px; font-size: clamp(3.4rem, 7.4vw, 7rem); line-height: .88; letter-spacing: -.085em; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(360px, .98fr); gap: clamp(42px, 7vw, 110px); align-items: center; width: min(1240px, calc(100% - 44px)); min-height: calc(100dvh - 66px); margin: auto; padding: 108px 0 92px; }
+    .hero > *, .layout > *, .hero-copy, .console { min-width: 0; }
+    .hero-copy { position: relative; padding-top: 20px; }
+    .hero-copy::before, .hero-copy::after { display: block; height: 1px; margin: 0 -22px 20px; content: ""; background: var(--gradient); }
+    .hero-copy::after { margin: 22px -22px 0; }
+    .eyebrow { margin: 0; color: var(--signal); font: 750 12px/1.2 var(--mono); letter-spacing: .16em; text-transform: uppercase; }
+    h1 { max-width: 760px; margin: 17px 0 23px; font-size: clamp(3.4rem, 7.4vw, 7rem); line-height: .92; letter-spacing: -.025em; }
+    h1 .gradient-word { background: var(--gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .lede { max-width: 610px; margin: 0; color: var(--muted); font-size: clamp(1.05rem, 1.6vw, 1.28rem); }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
     .hero-note { display: flex; gap: 9px; align-items: center; margin-top: 20px; color: var(--faint); font-size: 12px; }
     .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 5px color-mix(in srgb, var(--mint) 15%, transparent); }
 
-    .console { position: relative; padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: color-mix(in srgb, var(--panel) 94%, transparent); box-shadow: 18px 22px 0 color-mix(in srgb, var(--signal) 11%, transparent), 0 20px 60px var(--shadow); }
+    .console { position: relative; padding: 18px; border: 1px solid var(--line); border-radius: 20px; background: color-mix(in srgb, var(--panel) 96%, transparent); box-shadow: var(--shadow-md); }
     .console::before { position: absolute; top: -11px; right: 24px; width: 74px; height: 22px; border: 1px solid var(--line); border-bottom: 0; border-radius: 12px 12px 0 0; content: ""; background: var(--panel-2); }
     .console-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
     .console-head strong { font-size: 14px; }
-    .status { display: inline-flex; align-items: center; gap: 7px; color: var(--mint); font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .status { display: inline-flex; align-items: center; gap: 7px; color: var(--mint); font: 12px var(--mono); }
     .status i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-    .console pre { margin: 0; padding: 17px; border: 1px solid var(--line); border-radius: 9px; color: var(--text); background: #0a1015; font: 13px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; }
-    [data-theme="light"] .console pre { background: #152129; color: #e9f1ee; }
+    .console pre { max-width: 100%; margin: 0; padding: 17px; border: 1px solid var(--line); border-radius: 12px; color: var(--text); background: var(--panel-2); font: 13px/1.7 var(--mono); }
+    [data-theme="light"] .console pre { background: var(--panel-2); color: var(--text); }
     .console pre .key { color: var(--blue); }
     .console pre .fn { color: var(--signal-2); }
     .console pre .str { color: var(--mint); }
@@ -117,21 +302,21 @@
     .mobile-toc { display: none; }
 
     section { scroll-margin-top: 88px; padding: 17px 0 57px; border-top: 1px solid var(--line); }
-    section h2 { margin: 10px 0 14px; font-size: clamp(1.8rem, 4vw, 2.75rem); line-height: 1.02; letter-spacing: -.055em; }
+    section h2 { margin: 10px 0 14px; font-size: clamp(1.8rem, 4vw, 2.75rem); line-height: 1.02; letter-spacing: -.025em; }
     section h3 { margin: 27px 0 9px; font-size: 1.08rem; }
     p, li { color: var(--muted); }
     p { margin: 10px 0; }
     ul, ol { padding-left: 21px; }
-    code, pre { font: 13px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    code, pre { font: 13px/1.65 var(--mono); }
     code { color: var(--code); }
-    pre { overflow: auto; margin: 0; padding: 15px; border: 1px solid var(--line); border-radius: 9px; color: var(--text); background: var(--panel-2); }
+    pre { overflow: auto; margin: 0; padding: 15px; border: 1px solid var(--line); border-radius: 12px; color: var(--text); background: var(--panel-2); }
     .code { position: relative; margin: 14px 0; }
     .code pre { padding-right: 78px; }
     .copy { position: absolute; top: 8px; right: 8px; min-height: 32px; padding-inline: 10px; font-size: 12px; }
     .note { margin: 18px 0; padding: 14px 16px; border-left: 3px solid var(--signal); color: var(--muted); background: color-mix(in srgb, var(--signal) 8%, var(--panel)); }
     .note strong { color: var(--text); }
     .tabs { display: flex; gap: 7px; margin: 19px 0 13px; }
-    .tabs button[aria-selected="true"] { border-color: var(--signal); color: var(--signal); background: color-mix(in srgb, var(--signal) 8%, var(--panel)); }
+    .tabs button[aria-selected="true"] { border-color: var(--signal-2); color: var(--signal-2); background: color-mix(in srgb, var(--signal) 8%, var(--panel)); }
     [role="tabpanel"][hidden] { display: none; }
     .steps { display: grid; gap: 11px; padding: 0; list-style: none; counter-reset: step; }
     .steps li { position: relative; padding: 15px 16px 15px 57px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); }
@@ -140,12 +325,21 @@
     .cards li { padding: 16px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); }
     .cards strong { color: var(--text); }
     .cards span { display: block; margin-top: 5px; color: var(--muted); font-size: 13px; }
+    .definition-list { display: grid; gap: 9px; margin: 18px 0 0; }
+    .definition-list > div { display: grid; grid-template-columns: 155px minmax(0, 1fr); gap: 15px; padding: 14px 15px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); }
+    .definition-list dt { color: var(--text); font-weight: 750; }
+    .definition-list dd { margin: 0; color: var(--muted); }
     .matrix { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .matrix caption { margin-bottom: 8px; color: var(--muted); font-size: 12px; text-align: left; }
     .matrix th, .matrix td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
     .matrix th { color: var(--text); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
     .matrix td { color: var(--muted); }
     .yes { color: var(--mint); font-weight: 700; }
     .pending { color: var(--signal); font-weight: 700; }
+    .faq-list { margin-top: 18px; border-top: 1px solid var(--line); }
+    .faq-list > div { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .faq-list h3 { margin: 0 0 5px; }
+    .faq-list p { margin: 0; }
     details { padding: 12px 0; border-top: 1px solid var(--line); }
     summary { cursor: pointer; color: var(--text); font-weight: 700; }
     details p { margin-bottom: 0; }
@@ -155,10 +349,10 @@
     .builder fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
     .segments { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
     .segments label { display: grid; min-height: 42px; place-items: center; padding: 0 7px; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); cursor: pointer; text-align: center; }
-    .segments label:has(input:checked) { border-color: var(--signal); color: var(--signal); background: color-mix(in srgb, var(--signal) 8%, var(--panel)); }
+    .segments label:has(input:checked) { border-color: var(--signal-2); color: var(--signal-2); background: color-mix(in srgb, var(--signal) 8%, var(--panel)); }
     .segments input { position: absolute; opacity: 0; }
     .builder .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .builder output { display: block; min-height: 80px; margin: 0; padding: 12px; border: 1px solid var(--line); border-radius: 7px; color: var(--mint); background: #0a1015; font: 12px/1.6 ui-monospace, monospace; white-space: pre-wrap; }
+    .builder output { display: block; min-height: 80px; margin: 0; padding: 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--mint); background: var(--panel-2); font: 12px/1.6 var(--mono); white-space: pre-wrap; }
     footer { display: flex; justify-content: space-between; gap: 20px; width: min(1240px, calc(100% - 44px)); margin: auto; padding: 27px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
     footer a { color: var(--signal); }
     .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
@@ -171,10 +365,12 @@
       .top nav { display: none; }
     }
     @media (max-width: 600px) {
+      .top { left: 8px; right: 8px; width: calc(100% - 16px); }
       .top-inner, .hero, .layout, footer { width: min(100% - 28px, 1240px); }
       h1 { font-size: 3.45rem; }
       .cards, .builder .row { grid-template-columns: 1fr; }
-      .console { box-shadow: 8px 10px 0 color-mix(in srgb, var(--signal) 11%, transparent); }
+      .definition-list > div { grid-template-columns: 1fr; gap: 5px; }
+      .console { box-shadow: var(--shadow-md); }
       footer { display: block; }
       footer span { display: block; margin-top: 8px; }
     }
@@ -202,9 +398,9 @@
 
   <main id="content">
     <section class="hero" id="top">
-      <div>
+      <div class="hero-copy">
         <p class="eyebrow">Codex-style desktop control for OpenCode</p>
-        <h1>Desktop control with a memory.</h1>
+        <h1>Desktop control with a <span class="gradient-word">memory.</span></h1>
         <p class="lede">A small, persistent <code>cua_repl</code> session for OpenCode and OpenCode2. Bind an app, inspect its accessibility state, act, and verify the result without exposing a pile of raw desktop tools.</p>
         <div class="hero-actions">
           <a class="button primary" href="#install">Install the plugin</a>
@@ -212,8 +408,8 @@
         </div>
         <p class="hero-note"><span class="pulse" aria-hidden="true"></span> Local stdio MCP session, with native OS permissions still enforced.</p>
       </div>
-      <div class="console" aria-label="cua_repl session example">
-        <div class="console-head"><strong>Session / Chrome</strong><span class="status"><i aria-hidden="true"></i> cua_repl connected</span></div>
+      <div class="console" role="region" aria-label="cua_repl session example">
+        <div class="console-head"><strong>Session / Chrome</strong><span class="status"><i aria-hidden="true"></i> cua_repl example</span></div>
         <pre><code><span class="key">var</span> chrome = <span class="fn">await</span> cua.<span class="fn">getApp</span>(<span class="str">"Google Chrome"</span>);
 <span class="key">await</span> chrome.<span class="fn">getAXState</span>();
 <span class="key">await</span> chrome.<span class="fn">click</span>([<span class="str">530</span>, <span class="str">20</span>]);</code></pre>
@@ -224,19 +420,34 @@
     <div class="layout">
       <nav class="toc" aria-label="On this page">
         <strong>On this page</strong>
+        <a href="#quick-answer">Quick answer</a>
         <a href="#install">Install</a>
         <a href="#first-run">First run</a>
         <a href="#architecture">Architecture</a>
         <a href="#api">API surface</a>
+        <a href="#webmcp">WebMCP</a>
         <a href="#options">Options</a>
         <a href="#workflow">Workflow</a>
         <a href="#os">OS support</a>
         <a href="#security">Security</a>
         <a href="#troubleshooting">Troubleshooting</a>
+        <a href="#faq">FAQ</a>
       </nav>
 
       <article>
-        <details class="mobile-toc"><summary>On this page</summary><p><a href="#install">Install</a> · <a href="#first-run">First run</a> · <a href="#api">API</a> · <a href="#security">Security</a></p></details>
+        <details class="mobile-toc"><summary>On this page</summary><p><a href="#quick-answer">Quick answer</a> · <a href="#install">Install</a> · <a href="#first-run">First run</a> · <a href="#api">API</a> · <a href="#webmcp">WebMCP</a> · <a href="#security">Security</a> · <a href="#faq">FAQ</a></p></details>
+
+        <section id="quick-answer" data-section>
+          <h2>Short answer.</h2>
+          <p>OpenCode Computer Use is an OpenCode plugin that registers a local MCP server named <code>cua_repl</code>. The model receives two tools: <code>js</code> for persistent JavaScript and <code>js_reset</code> for a clean JavaScript session. Native operating-system permissions still control desktop access.</p>
+          <dl class="definition-list">
+            <div><dt>Plugin</dt><dd>The package loaded by OpenCode. It manages registration and lifecycle.</dd></div>
+            <div><dt>MCP server</dt><dd>The local stdio server named <code>cua_repl</code>.</dd></div>
+            <div><dt>Model tools</dt><dd><code>js</code> and <code>js_reset</code>, not raw desktop tools.</dd></div>
+            <div><dt>Native runtime</dt><dd><code>open-computer-use</code>, running separately with OS accessibility and capture permissions.</dd></div>
+            <div><dt>Supported hosts</dt><dd>OpenCode 1 and OpenCode2 on Linux, macOS, and Windows where the native runtime and permissions are available.</dd></div>
+          </dl>
+        </section>
 
         <section id="install" data-section>
           <h2>Install once. Keep the session.</h2>
@@ -244,6 +455,8 @@
           <div class="code"><pre><code id="clone">git clone git@github.com:rashidtvmr/opencode-computer-use.git
 cd opencode-computer-use
 npm install</code></pre><button class="copy" type="button" data-copy="#clone">Copy</button></div>
+          <p>For a published-package install, use:</p>
+          <div class="code"><pre><code id="npm-install">npm install @frontendxlab/opencode-computer-use</code></pre><button class="copy" type="button" data-copy="#npm-install">Copy</button></div>
           <div class="tabs" role="tablist" aria-label="OpenCode generation">
             <button role="tab" id="tab-v1" aria-controls="panel-v1" aria-selected="true">OpenCode 1</button>
             <button role="tab" id="tab-v2" aria-controls="panel-v2" aria-selected="false" tabindex="-1">OpenCode2</button>
@@ -253,7 +466,7 @@ npm install</code></pre><button class="copy" type="button" data-copy="#clone">Co
             <div class="code"><pre><code id="config-v1">{
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    ["/absolute/path/to/opencode-computer-use", { "backend": "auto" }]
+    ["@frontendxlab/opencode-computer-use", { "backend": "auto" }]
   ]
 }</code></pre><button class="copy" type="button" data-copy="#config-v1">Copy</button></div>
             <p>Restart OpenCode or reopen the TUI, then verify the dynamically registered server:</p>
@@ -265,7 +478,7 @@ npm install</code></pre><button class="copy" type="button" data-copy="#clone">Co
   "$schema": "https://opencode.ai/config.json",
   "plugins": [
     {
-      "package": "/absolute/path/to/opencode-computer-use",
+      "package": "@frontendxlab/opencode-computer-use",
       "options": { "backend": "auto" }
     }
   ]
@@ -322,6 +535,14 @@ await chrome.getAXState({ textLimit: 12000 });</code></pre><button class="copy" 
           <p>Use <code>nodeRepl.write(value)</code> for extra text and <code>await nodeRepl.emitImage(bytesOrDataUrl)</code> for local images. Both are bounded before crossing the worker boundary.</p>
         </section>
 
+        <section id="webmcp" data-section>
+          <h2>WebMCP, when available.</h2>
+          <p>The documentation page includes a small, read-only WebMCP enhancement based on the current <code>document.modelContext.registerTool()</code> draft. Browsers without the preview API continue normally; no desktop-control or mutating tool is exposed through the page.</p>
+          <div class="code"><pre><code id="webmcp-code">const tools = await document.modelContext.getTools();
+// Preview-only discovery: search_docs, get_install_config, get_api_reference</code></pre><button class="copy" type="button" data-copy="#webmcp-code">Copy</button></div>
+          <p class="note"><strong>Preview boundary:</strong> WebMCP support is experimental and requires a supporting browser, a secure context, and the <code>tools</code> Permissions Policy. Cloudflare Browser Run lab sessions can be used to test discovery. This page does not claim stable or universal browser support.</p>
+        </section>
+
         <section id="options" data-section>
           <h2>Make risky capabilities explicit.</h2>
           <div class="code"><pre><code id="options-json">{
@@ -361,7 +582,8 @@ nodeRepl.write(state);</code></pre><button class="copy" type="button" data-copy=
         <section id="os" data-section>
           <h2>Know what the host can do.</h2>
           <table class="matrix">
-            <thead><tr><th>Target</th><th>Packaged runtime</th><th>Live status here</th></tr></thead>
+            <caption>Operating-system runtime targets and current validation status</caption>
+            <thead><tr><th scope="col">Target</th><th scope="col">Packaged runtime</th><th scope="col">Live status here</th></tr></thead>
             <tbody>
               <tr><td>Linux x64</td><td class="yes">Included</td><td class="yes">Read-only smoke passed</td></tr>
               <tr><td>Linux arm64</td><td class="yes">Included</td><td class="pending">Needs arm64 host</td></tr>
@@ -395,6 +617,18 @@ nodeRepl.write(state);</code></pre><button class="copy" type="button" data-copy=
           <details><summary>Linux input returns success but nothing changes</summary><p>Check the desktop session type and native runtime prerequisites. A pseudo-window or Wayland compositor can expose state without accepting synthetic input. Observe again before retrying a mutating action.</p></details>
           <details><summary>Global pointer fallback is rejected</summary><p>This is the expected safety gate. Enable <code>allowGlobalPointerFallbacks</code> only for an explicit diagnostic session where moving the real pointer and changing focus are acceptable.</p></details>
         </section>
+
+        <section id="faq" data-section>
+          <h2>Frequently asked questions.</h2>
+          <div class="faq-list">
+            <div><h3>Is OpenCode Computer Use a plugin, an MCP server, or both?</h3><p>Both layers are present. The OpenCode plugin loads the local package and registers an MCP server named cua_repl. That server exposes only js and js_reset to the model.</p></div>
+            <div><h3>What do js and js_reset do?</h3><p>js evaluates JavaScript in the persistent session, so variables and app bindings survive between calls. js_reset discards those bindings but does not reset native application state.</p></div>
+            <div><h3>Which operating systems are supported?</h3><p>Optional native runtime packages target Linux, macOS, and Windows on x64 and arm64. Live capabilities depend on OS permissions, the desktop session, and the target app; macOS and Windows still require live validation.</p></div>
+            <div><h3>Does the plugin bypass operating-system permissions?</h3><p>No. It cannot control a lock screen, login screen, or UAC secure desktop. OpenCode approvals and operating-system permissions remain the enforcement layer.</p></div>
+            <div><h3>Does the model get raw desktop tools or an arbitrary shell?</h3><p>No. The model sees only js and js_reset, not raw desktop tools or run_shell. The restricted JavaScript session also blocks filesystem, process, fetch, dynamic import, and code-generation access.</p></div>
+            <div><h3>How do I verify the installation?</h3><p>Restart OpenCode or reopen the TUI, run opencode mcp list, and confirm that cua_repl is connected before starting a desktop task.</p></div>
+          </div>
+        </section>
       </article>
 
       <aside class="rail">
@@ -402,6 +636,10 @@ nodeRepl.write(state);</code></pre><button class="copy" type="button" data-copy=
         <p>Plugin: <code>opencode-computer-use</code><br>MCP: <code>cua_repl</code><br>Tools: <code>js</code>, <code>js_reset</code></p>
         <strong>Default policy</strong>
         <p>Local stdio only. Global pointer fallback off. Native OS permissions enforced.</p>
+        <strong>Updated</strong>
+        <p>Published September 25, 2026. Updated September 25, 2026.</p>
+        <strong>WebMCP</strong>
+        <p>Preview support registers read-only documentation tools when the browser exposes the WebMCP API. Normal browsers remain fully supported.</p>
         <strong>Repository</strong>
         <p><a href="https://github.com/rashidtvmr/opencode-computer-use">Source and issues</a></p>
       </aside>
@@ -414,6 +652,7 @@ nodeRepl.write(state);</code></pre><button class="copy" type="button" data-copy=
   </footer>
   <div class="sr" id="live-region" aria-live="polite"></div>
 
+  <script src="/webmcp.js" defer></script>
   <script>
     const root = document.documentElement;
     const themeButton = document.querySelector("#theme");
