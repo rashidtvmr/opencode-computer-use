@@ -28,6 +28,8 @@ sandbox.
   conflicting or malformed configuration. Ambiguous setup is non-destructive
   and prints manual instructions. CI and explicit skip environments bypass
   postinstall mutation.
+- The permission command delegates to the native runtime's `doctor` flow. It
+  may open macOS onboarding, but it never grants or changes permissions.
 
 ## Operator responsibilities
 

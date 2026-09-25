@@ -90,7 +90,11 @@ manual instructions. Run it explicitly with npx opencode-computer-use-setup;
 use --local, --global, --v1, or --v2 to choose explicitly. If pnpm reports
 ERR_PNPM_IGNORED_BUILDS, approve the package once with pnpm approve-builds
 @frontendxlab/opencode-computer-use, or run pnpm exec
-opencode-computer-use-setup manually. CI environments skip setup.
+opencode-computer-use-setup manually. CI environments skip setup. The
+postinstall flow also runs the native permission check. Rerun it with
+npx opencode-computer-use-permissions or pnpm exec
+opencode-computer-use-permissions. macOS can launch onboarding, Linux reports
+AT-SPI requirements, and Windows reports UI Automation requirements.
 OpenCode 1 (opencode.json or opencode.jsonc, plugin list):
   { "$schema": "https://opencode.ai/config.json",
     "plugin": [["@frontendxlab/opencode-computer-use", { "backend": "auto" }]] }

@@ -1,6 +1,6 @@
 {
   "name": "@frontendxlab/opencode-computer-use",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A dual OpenCode and OpenCode2 plugin for local cross-platform desktop control.",
   "license": "MIT",
   "repository": {
@@ -29,7 +29,8 @@
   },
   "bin": {
     "opencode-computer-use-repl": "bin/opencode-computer-use-repl.js",
-    "opencode-computer-use-setup": "bin/opencode-computer-use-setup.js"
+    "opencode-computer-use-setup": "bin/opencode-computer-use-setup.js",
+    "opencode-computer-use-permissions": "bin/opencode-computer-use-permissions.js"
   },
   "files": [
     "bin/",
@@ -46,10 +47,10 @@
     "opencode": ">=0.0.0-beta-18684"
   },
   "scripts": {
-    "postinstall": "node bin/opencode-computer-use-setup.js --auto",
-    "lint": "node --check index.js && node --check bin/opencode-computer-use-repl.js && node --check bin/opencode-computer-use-setup.js && node --check lib/backend.js && node --check lib/json-line-peer.mjs && node --check lib/options.js && node --check lib/output.mjs && node --check lib/repl.mjs && node --check lib/repl-kernel.mjs && node --check lib/sandbox.mjs",
+    "postinstall": "node bin/opencode-computer-use-setup.js --auto && node bin/opencode-computer-use-permissions.js",
+    "lint": "node --check index.js && node --check bin/opencode-computer-use-repl.js && node --check bin/opencode-computer-use-setup.js && node --check bin/opencode-computer-use-permissions.js && node --check lib/backend.js && node --check lib/json-line-peer.mjs && node --check lib/options.js && node --check lib/output.mjs && node --check lib/repl.mjs && node --check lib/repl-kernel.mjs && node --check lib/sandbox.mjs",
     "test": "node --test",
-    "prepack": "node --check index.js && node --check bin/opencode-computer-use-repl.js && node --check bin/opencode-computer-use-setup.js && node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8'))\"",
+    "prepack": "node --check index.js && node --check bin/opencode-computer-use-repl.js && node --check bin/opencode-computer-use-setup.js && node --check bin/opencode-computer-use-permissions.js && node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8'))\"",
     "prepublishOnly": "npm run lint && npm test"
   },
   "optionalDependencies": {

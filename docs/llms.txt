@@ -27,6 +27,6 @@
 - Safety profiles: safetyMode=read-only blocks mutating CUA methods and changes js annotations; appAccess supports exact-name and ID allow/deny rules.
 - Reliability: app bindings and output are bounded; native timeouts send cancellation; shutdown sends a best-effort turn-ended notification.
 - No arbitrary shell escape. No run_shell in the model-facing API. Restricted VM blocks require, process, fetch, filesystem, dynamic import, and code generation.
-- Published package: @frontendxlab/opencode-computer-use. Its postinstall setup detects OpenCode generation and local/global scope, preserves JSONC, and prints manual instructions when ambiguous. Explicit setup: npx opencode-computer-use-setup --local|--global --v1|--v2.
+- Published package: @frontendxlab/opencode-computer-use. Its postinstall setup detects OpenCode generation and local/global scope, preserves JSONC, and prints manual instructions when ambiguous. Explicit setup: npx opencode-computer-use-setup --local|--global --v1|--v2. Permission onboarding rerun: npx opencode-computer-use-permissions.
 - Requirements: Node.js 18 or newer, OpenCode 1.18.29 or newer (V1) or OpenCode2 V2, plus a signed-in graphical desktop session with OS accessibility and capture permissions.
 - Native runtimes packaged for darwin-arm64, darwin-x64, linux-arm64, linux-x64, win32-arm64, win32-x64. Live smoke tests passed on Linux x64 only; macOS and Windows need on-host validation.

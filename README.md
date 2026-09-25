@@ -115,6 +115,22 @@ Use `--dry-run` to inspect the action without changing files. Set
 skips automatically when `CI=1` or `CI=true`. Restart OpenCode after a
 successful setup so the plugin is loaded.
 
+The postinstall flow also runs the native permission check. To rerun it later:
+
+```sh
+npx opencode-computer-use-permissions
+# or, from a pnpm project
+pnpm exec opencode-computer-use-permissions
+```
+
+The command delegates to the native `open-computer-use doctor` flow. macOS runs
+the native Accessibility and Screen Recording onboarding when needed. Linux
+reports AT-SPI and desktop-session requirements. Windows reports UI Automation
+and interactive-session requirements. The command never changes permissions
+automatically. Use `--strict` when a missing or failed native
+check should return a nonzero exit status, or set
+`OPENCODE_COMPUTER_USE_SKIP_PERMISSIONS=1` to skip it.
+
 Recent pnpm releases may require explicit approval before running lifecycle
 scripts from dependencies. If pnpm reports `ERR_PNPM_IGNORED_BUILDS`, approve
 this package once and rerun the install:
