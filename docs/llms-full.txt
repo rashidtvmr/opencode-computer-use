@@ -90,8 +90,8 @@ manual instructions. Run it explicitly with npx opencode-computer-use-setup;
 use --local, --global, --v1, or --v2 to choose explicitly. If pnpm reports
 ERR_PNPM_IGNORED_BUILDS, approve the package once with pnpm approve-builds
 @frontendxlab/opencode-computer-use, or run pnpm exec
-opencode-computer-use-setup manually. CI environments skip setup. The
-postinstall flow also runs the native permission check. Rerun it with
+opencode-computer-use-setup manually. CI environments skip setup. Permission
+onboarding is intentionally not run during postinstall. Run it explicitly with
 npx opencode-computer-use-permissions or pnpm exec
 opencode-computer-use-permissions. macOS can launch onboarding, Linux reports
 AT-SPI requirements, and Windows reports UI Automation requirements.
@@ -115,13 +115,14 @@ capture services; Windows UI Automation in the interactive desktop session.
 The plugin cannot control lock screens, login screens, UAC secure desktops,
 or other OS-owned consent surfaces, and does not bypass permissions.
 Packaged native targets: darwin-arm64, darwin-x64, linux-arm64, linux-x64,
-win32-arm64, win32-x64. Validation status: Linux x64 read-only discovery,
+win32-arm64, win32-x64. CI is configured to exercise the adapter on Linux,
+macOS, and Windows without a graphical desktop. Validation status: Linux x64 read-only discovery,
 app listing, MCP registration, and persistent session passed local smoke
 tests; one Ubuntu/GNOME Wayland session exposed a Chrome pseudo-window with
 no actionable AT-SPI children and synthetic input did not change it (the
-adapter reports the native result honestly); macOS and Windows have not
-been live-tested in this environment and need on-host permission and
-desktop validation.
+adapter reports the native result honestly); macOS and Windows native desktop
+behavior has not been live-tested in this environment and needs on-host
+permission and desktop validation.
 
 8. Safety
 High-privilege desktop-control surface. The js tool is marked conservatively

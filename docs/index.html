@@ -61,9 +61,9 @@
           "name": "OpenCode Computer Use",
           "description": "A dual-generation OpenCode plugin for local desktop control through a persistent cua_repl JavaScript session.",
           "url": "https://opencode-computer-use.pages.dev/",
-          "softwareVersion": "0.1.1",
+          "softwareVersion": "0.1.4",
           "datePublished": "2026-09-25",
-          "dateModified": "2026-09-25",
+          "dateModified": "2026-09-27",
           "isAccessibleForFree": true,
           "downloadUrl": "https://www.npmjs.com/package/@frontendxlab/opencode-computer-use",
           "applicationCategory": "DeveloperApplication",
@@ -336,6 +336,29 @@
     .matrix td { color: var(--muted); }
     .yes { color: var(--mint); font-weight: 700; }
     .pending { color: var(--signal); font-weight: 700; }
+    .capability-intro { max-width: 690px; }
+    .capability-legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 17px 0 14px; }
+    .capability-legend .legend-item { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--panel); font: 12px var(--mono); }
+    .capability-scroll { overflow-x: auto; margin: 16px 0 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+    .capability-matrix { width: 100%; min-width: 760px; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+    .capability-matrix th, .capability-matrix td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+    .capability-matrix thead th { position: sticky; top: 0; z-index: 2; color: var(--text); background: color-mix(in srgb, var(--panel-2) 96%, transparent); font: 700 11px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .capability-matrix thead th:not(:first-child):not(:last-child) { width: 88px; text-align: center; }
+    .capability-matrix th:first-child, .capability-matrix td:first-child { position: sticky; left: 0; z-index: 1; width: 245px; background: var(--panel); }
+    .capability-matrix thead th:first-child { z-index: 3; background: var(--panel-2); }
+    .capability-matrix td:nth-child(2), .capability-matrix td:nth-child(3), .capability-matrix td:nth-child(4) { text-align: center; }
+    .capability-matrix td:last-child { min-width: 250px; color: var(--muted); line-height: 1.45; }
+    .capability-matrix tr:last-child td { border-bottom: 0; }
+    .capability-matrix .cap-group th { position: static; padding: 9px 12px; border-bottom: 1px solid var(--line); color: var(--signal-2); background: color-mix(in srgb, var(--signal) 8%, var(--panel)); font: 750 11px/1.2 var(--mono); letter-spacing: .08em; text-align: left; text-transform: uppercase; }
+    .cap-name { display: block; color: var(--text); font-weight: 700; line-height: 1.3; }
+    .cap-code { display: block; margin-top: 3px; color: var(--faint); font: 11px/1.35 var(--mono); }
+    .cap-status { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; border: 1px solid currentColor; border-radius: 999px; }
+    .cap-status svg, .legend-item svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .cap-status.supported, .legend-item.supported { color: var(--mint); }
+    .cap-status.conditional, .legend-item.conditional { color: var(--signal-2); }
+    .cap-status.blocked, .legend-item.blocked { color: var(--danger); }
+    .capability-footnote { padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; color: var(--muted); background: color-mix(in srgb, var(--panel-2) 82%, transparent); font-size: 13px; }
+    .capability-footnote strong { color: var(--text); }
     .faq-list { margin-top: 18px; border-top: 1px solid var(--line); }
     .faq-list > div { padding: 14px 0; border-bottom: 1px solid var(--line); }
     .faq-list h3 { margin: 0 0 5px; }
@@ -370,6 +393,7 @@
       h1 { font-size: 3.45rem; }
       .cards, .builder .row { grid-template-columns: 1fr; }
       .definition-list > div { grid-template-columns: 1fr; gap: 5px; }
+      .capability-scroll { margin-inline: -2px; }
       .console { box-shadow: var(--shadow-md); }
       footer { display: block; }
       footer span { display: block; margin-top: 8px; }
@@ -381,6 +405,11 @@
   </style>
 </head>
 <body>
+  <svg class="sr" aria-hidden="true" focusable="false">
+    <symbol id="lucide-circle-check" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="m9 11 3 3L22 4"></path></symbol>
+    <symbol id="lucide-triangle-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></symbol>
+    <symbol id="lucide-circle-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6"></path><path d="m9 9 6 6"></path></symbol>
+  </svg>
   <a class="skip" href="#content">Skip to documentation</a>
   <header class="top">
     <div class="top-inner">
@@ -389,6 +418,7 @@
         <a href="#install">Install</a>
         <a href="#first-run">First run</a>
         <a href="#api">API</a>
+        <a href="#capabilities">Capabilities</a>
         <a href="#security">Security</a>
         <a href="https://github.com/rashidtvmr/opencode-computer-use">GitHub</a>
       </nav>
@@ -425,6 +455,7 @@
         <a href="#first-run">First run</a>
         <a href="#architecture">Architecture</a>
         <a href="#api">API surface</a>
+        <a href="#capabilities">Capabilities</a>
         <a href="#webmcp">WebMCP</a>
         <a href="#options">Options</a>
         <a href="#workflow">Workflow</a>
@@ -435,7 +466,7 @@
       </nav>
 
       <article>
-        <details class="mobile-toc"><summary>On this page</summary><p><a href="#quick-answer">Quick answer</a> · <a href="#install">Install</a> · <a href="#first-run">First run</a> · <a href="#api">API</a> · <a href="#webmcp">WebMCP</a> · <a href="#security">Security</a> · <a href="#faq">FAQ</a></p></details>
+        <details class="mobile-toc"><summary>On this page</summary><p><a href="#quick-answer">Quick answer</a> · <a href="#install">Install</a> · <a href="#first-run">First run</a> · <a href="#api">API</a> · <a href="#capabilities">Capabilities</a> · <a href="#webmcp">WebMCP</a> · <a href="#security">Security</a> · <a href="#faq">FAQ</a></p></details>
 
         <section id="quick-answer" data-section>
           <h2>Short answer.</h2>
@@ -460,7 +491,7 @@ npm install</code></pre><button class="copy" type="button" data-copy="#clone">Co
 # pnpm install @frontendxlab/opencode-computer-use also works</code></pre><button class="copy" type="button" data-copy="#npm-install">Copy</button></div>
           <p>The package postinstall step detects OpenCode 1 versus OpenCode2 and local versus global installation. It edits JSONC without discarding comments, avoids duplicate entries, and prints both manual formats when the choice is ambiguous. Run it explicitly with <code>npx opencode-computer-use-setup</code>, or add <code>--local</code>, <code>--global</code>, <code>--v1</code>, or <code>--v2</code> when you want to choose explicitly.</p>
           <p>Recent pnpm releases can require explicit lifecycle-script approval. If pnpm reports <code>ERR_PNPM_IGNORED_BUILDS</code>, run <code>pnpm approve-builds @frontendxlab/opencode-computer-use</code> once, then rerun <code>pnpm install</code>. If scripts are disabled, run <code>pnpm exec opencode-computer-use-setup</code> manually. CI environments skip setup automatically.</p>
-          <p>The postinstall flow also runs the native <code>open-computer-use doctor</code> permission check. To rerun it, use <code>npx opencode-computer-use-permissions</code> or <code>pnpm exec opencode-computer-use-permissions</code>. macOS can launch Accessibility and Screen Recording onboarding, Linux reports AT-SPI requirements, and Windows reports UI Automation requirements. Permissions are never changed automatically.</p>
+          <p>Permission onboarding is intentionally explicit rather than a postinstall side effect. Run <code>npx opencode-computer-use-permissions</code> or <code>pnpm exec opencode-computer-use-permissions</code> after installation. macOS can launch Accessibility and Screen Recording onboarding, Linux reports AT-SPI requirements, and Windows reports UI Automation requirements. Permissions are never changed automatically.</p>
           <div class="tabs" role="tablist" aria-label="OpenCode generation">
             <button role="tab" id="tab-v1" aria-controls="panel-v1" aria-selected="true">OpenCode 1</button>
             <button role="tab" id="tab-v2" aria-controls="panel-v2" aria-selected="false" tabindex="-1">OpenCode2</button>
@@ -537,6 +568,301 @@ await chrome.getAXState({ textLimit: 12000 });</code></pre><button class="copy" 
             <li><strong>app.performSecondaryAction(index, action)</strong><span>Invoke an advertised accessibility action such as a context action.</span></li>
           </ul>
           <p>Use <code>nodeRepl.write(value)</code> for extra text and <code>await nodeRepl.emitImage(bytesOrDataUrl)</code> for local images. Both are bounded before crossing the worker boundary.</p>
+        </section>
+
+        <section id="capabilities" data-section>
+          <h2>What it can — and cannot — do.</h2>
+          <p class="capability-intro">This is the complete model-facing computer-use surface of the current <code>cua_repl</code> adapter, plus its intentional exclusions. A green check means the adapter/native runtime exposes that path; it does <strong>not</strong> mean every application or desktop session will accept it.</p>
+          <div class="capability-legend" aria-label="Capability status legend">
+            <span class="legend-item supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg> Supported</span>
+            <span class="legend-item conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg> Conditional</span>
+            <span class="legend-item blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg> Not exposed / blocked</span>
+          </div>
+          <div class="capability-scroll" role="region" aria-label="Computer use capabilities by operating system" tabindex="0">
+            <table class="capability-matrix">
+              <thead><tr><th scope="col">Capability</th><th scope="col">macOS</th><th scope="col">Linux</th><th scope="col">Windows</th><th scope="col">What that means</th></tr></thead>
+              <tbody>
+                <tr class="cap-group"><th colspan="5">Observe & understand</th></tr>
+                <tr>
+                  <td><span class="cap-name">List visible applications</span><span class="cap-code">cua.listApps()</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Discovers apps visible to the native accessibility runtime in the signed-in desktop session.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Read desktop / app inventory</span><span class="cap-code">cua.getState()</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Returns the current structured app inventory with bounded output.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Bind an existing application</span><span class="cap-code">cua.getApp(nameOrID)</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Binds an already running or visible app. It does not launch a new application.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Read accessibility / UI tree</span><span class="cap-code">app.getAXState()</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>macOS uses Accessibility, Linux AT-SPI, and Windows UI Automation. Some Wayland/app combinations expose incomplete trees.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Capture an app screenshot</span><span class="cap-code">app.getScreenshot()</span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td>Depends on capture permission plus the active compositor/capture backend.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Read state + screenshot together</span><span class="cap-code">app.getAXStateAndScreenshot()</span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td>Combines semantic state and image capture; state can still be useful when capture is unavailable.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Keep variables and app bindings</span><span class="cap-code">persistent js session</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Top-level variables and app bindings survive across model turns until js_reset or a timeout reset.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Emit text and images to the model</span><span class="cap-code">nodeRepl.write / emitImage</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Text and image output are bounded before crossing the worker/MCP boundary.</td>
+                </tr>
+                <tr class="cap-group"><th colspan="5">Interact with an app</th></tr>
+                <tr>
+                  <td><span class="cap-name">Click a semantic element</span><span class="cap-code">app.click(elementIndex)</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Preferred input path. Requires a current actionable accessibility element.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Click a coordinate</span><span class="cap-code">app.click([x, y])</span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td>Use when semantic state is insufficient. System/global-pointer fallback is separately gated.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Type literal text</span><span class="cap-code">app.typeText(text)</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Requires a writable/focused target and an input path accepted by the host desktop.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Press keys / supported chords</span><span class="cap-code">app.pressKey(key)</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Host input restrictions, focus, and compositor behavior still apply.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Scroll an accessibility element</span><span class="cap-code">app.scroll(index, direction, pages)</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Semantic element scrolling is exposed. Coordinate-only scrolling is intentionally rejected.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Drag between coordinates</span><span class="cap-code">app.drag([x1,y1], [x2,y2])</span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td>Coordinate/input-backend dependent; verify the resulting UI state rather than assuming success.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Set an accessibility value</span><span class="cap-code">app.setValue(index, value)</span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td>Only works when the target element/backend advertises a writable accessibility value.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Run a secondary accessibility action</span><span class="cap-code">app.performSecondaryAction()</span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td>Only actions advertised by the accessibility element/backend can be invoked.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Use global pointer fallback</span><span class="cap-code">allowGlobalPointerFallbacks</span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td><span class="cap-status conditional" aria-label="Conditional" title="Conditional"><svg aria-hidden="true"><use href="#lucide-triangle-alert"></use></svg></span></td>
+                  <td>Off by default. Must be explicitly enabled because it can move the real pointer and change focus.</td>
+                </tr>
+                <tr class="cap-group"><th colspan="5">Session, safety & recovery</th></tr>
+                <tr>
+                  <td><span class="cap-name">Run a read-only desktop session</span><span class="cap-code">safetyMode: read-only</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Mutating CUA methods are blocked by the adapter before native execution.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Allow / deny specific applications</span><span class="cap-code">appAccess</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Exact case-insensitive app name/ID rules are enforced before binding and actions.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Reset JavaScript bindings</span><span class="cap-code">js_reset</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Clears REPL variables and bindings without closing apps or resetting their native state.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Recover from CPU-bound JavaScript</span><span class="cap-code">worker timeout + restart</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>A wedged JS evaluation is terminated in its worker and the JavaScript session is restarted.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Cancel timed-out native requests</span><span class="cap-code">notifications/cancelled</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Cancellation is best-effort. After an uncertain mutation, observe state before acting again.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Clean up at session end</span><span class="cap-code">notifications/turn-ended</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Shutdown sends best-effort lifecycle cleanup before the native child is closed.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Re-emit CUA usage guidance</span><span class="cap-code">cua.rewriteDocumentation()</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Reprints the bounded API guidance inside the persistent JavaScript session.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Use safe JavaScript timers</span><span class="cap-code">setTimeout / clearTimeout</span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td><span class="cap-status supported" aria-label="Supported" title="Supported"><svg aria-hidden="true"><use href="#lucide-circle-check"></use></svg></span></td>
+                  <td>Timers exist inside the restricted session and are cancelled when the active evaluation ends or resets.</td>
+                </tr>
+                <tr class="cap-group"><th colspan="5">Intentionally unavailable through cua_repl</th></tr>
+                <tr>
+                  <td><span class="cap-name">Launch a new application</span><span class="cap-code">no model-facing method</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><code>cua.getApp()</code> binds an existing/visible app; the adapter exposes no launch method.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Quit / force-close an application</span><span class="cap-code">no model-facing method</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>No quit, terminate, or force-kill application API is exposed to the model.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Move / resize native windows</span><span class="cap-code">no model-facing method</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>The current public CUA facade has no window-management methods.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Coordinate-only scrolling</span><span class="cap-code">app.scroll([x,y], ...)</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>The adapter explicitly rejects coordinate scroll; bind a semantic element instead.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Read / write clipboard directly</span><span class="cap-code">no clipboard API</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>There is no direct clipboard API. Normal app keyboard shortcuts may still work when the app/OS accepts them.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Use browser DOM / CDP directly</span><span class="cap-code">no DOM or CDP API</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>Browser windows are controlled like desktop apps through accessibility/screenshot state, not page DOM or Chrome DevTools Protocol.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Record screen video or audio</span><span class="cap-code">screenshot only</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>The model-facing surface can request still screenshots; it does not expose continuous screen, camera, microphone, or audio recording.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Run arbitrary shell commands</span><span class="cap-code">run_shell / exec</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>Deliberately omitted from the model-facing CUA API.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Read / write filesystem from JS</span><span class="cap-code">fs / require / process</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>Node built-ins, require, process, and filesystem access are removed from the sandbox.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Make network requests from JS</span><span class="cap-code">fetch / sockets</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><code>fetch</code> and arbitrary networking are unavailable inside the model-facing VM.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Use dynamic imports / code generation</span><span class="cap-code">import() / eval / Function</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>Dynamic imports, string code generation, WebAssembly, and host-realm escapes are disabled.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Control lock / login / secure desktop</span><span class="cap-code">OS-owned surfaces</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>Lock/login screens, Windows UAC secure desktop, and other OS-owned consent surfaces are outside the supported session.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Bypass operating-system permissions</span><span class="cap-code">Accessibility / AT-SPI / UIA / capture</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>The plugin never elevates itself or bypasses native permission boundaries.</td>
+                </tr>
+                <tr>
+                  <td><span class="cap-name">Automate password managers</span><span class="cap-code">native safety denial</span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td><span class="cap-status blocked" aria-label="Not exposed or blocked" title="Not exposed or blocked"><svg aria-hidden="true"><use href="#lucide-circle-x"></use></svg></span></td>
+                  <td>The native runtime keeps its password-manager safety denial; secret stores are intentionally out of scope.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="capability-footnote"><strong>Platform reality:</strong> macOS needs Accessibility and Screen Recording permissions. Linux needs a signed-in AT-SPI/D-Bus desktop and some Wayland applications may expose incomplete or non-actionable state. Windows needs a signed-in interactive UI Automation session. macOS and Windows are packaged targets but still require the live certification checklist before their native desktop behavior is described as verified.</div>
         </section>
 
         <section id="webmcp" data-section>
@@ -628,7 +954,7 @@ nodeRepl.write(state);</code></pre><button class="copy" type="button" data-copy=
           <details><summary><code>cua_repl</code> is not listed</summary><p>Check that the plugin path is in the active OpenCode generation's configuration, restart the TUI, and run <code>opencode mcp list</code>. Do not register the same plugin and MCP server twice.</p></details>
           <details><summary>Node cannot be found</summary><p>Set <code>OPENCODE_NODE</code> to an absolute Node executable before starting OpenCode, or make <code>node</code> available on the server PATH.</p></details>
           <details><summary>Permission onboarding needs to be rerun</summary><p>Run <code>opencode-computer-use-permissions</code>. On macOS it can reopen Accessibility and Screen Recording onboarding; Linux and Windows print the relevant runtime requirements.</p></details>
-          <details><summary>The app list is empty</summary><p>Run <code>open-computer-use-permissions</code>, then <code>open-computer-use list-apps</code> in the same graphical session. Confirm the app is already running and that the desktop accessibility session is available.</p></details>
+          <details><summary>The app list is empty</summary><p>Run <code>opencode-computer-use-permissions</code>, then <code>open-computer-use list-apps</code> in the same graphical session. Confirm the app is already running and that the desktop accessibility session is available.</p></details>
           <details><summary>Screenshots are unavailable</summary><p>Screen capture depends on the OS compositor and permissions. The plugin can still provide bounded accessibility text when capture is unavailable.</p></details>
           <details><summary>Linux input returns success but nothing changes</summary><p>Check the desktop session type and native runtime prerequisites. A pseudo-window or Wayland compositor can expose state without accepting synthetic input. Observe again before retrying a mutating action.</p></details>
           <details><summary>Global pointer fallback is rejected</summary><p>This is the expected safety gate. Enable <code>allowGlobalPointerFallbacks</code> only for an explicit diagnostic session where moving the real pointer and changing focus are acceptable.</p></details>
@@ -639,7 +965,7 @@ nodeRepl.write(state);</code></pre><button class="copy" type="button" data-copy=
           <div class="faq-list">
             <div><h3>Is OpenCode Computer Use a plugin, an MCP server, or both?</h3><p>Both layers are present. The OpenCode plugin loads the local package and registers an MCP server named cua_repl. That server exposes only js and js_reset to the model.</p></div>
             <div><h3>What do js and js_reset do?</h3><p>js evaluates JavaScript in the persistent session, so variables and app bindings survive between calls. js_reset discards those bindings but does not reset native application state.</p></div>
-            <div><h3>Which operating systems are supported?</h3><p>Optional native runtime packages target Linux, macOS, and Windows on x64 and arm64. Live capabilities depend on OS permissions, the desktop session, and the target app; macOS and Windows still require live validation.</p></div>
+            <div><h3>Which operating systems are supported?</h3><p>Optional native runtime packages target Linux, macOS, and Windows on x64 and arm64. CI is configured to test the adapter on all three operating systems; live capabilities still depend on OS permissions, the desktop session, and the target app, and macOS/Windows native desktop behavior requires on-host validation.</p></div>
             <div><h3>Does the plugin bypass operating-system permissions?</h3><p>No. It cannot control a lock screen, login screen, or UAC secure desktop. OpenCode approvals and operating-system permissions remain the enforcement layer.</p></div>
             <div><h3>Does the model get raw desktop tools or an arbitrary shell?</h3><p>No. The model sees only js and js_reset, not raw desktop tools or run_shell. The restricted JavaScript session also blocks filesystem, process, fetch, dynamic import, and code-generation access.</p></div>
             <div><h3>How do I verify the installation?</h3><p>Restart OpenCode or reopen the TUI, run opencode mcp list, and confirm that cua_repl is connected before starting a desktop task.</p></div>
