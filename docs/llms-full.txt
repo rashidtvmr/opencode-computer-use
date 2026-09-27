@@ -90,11 +90,13 @@ manual instructions. Run it explicitly with npx opencode-computer-use-setup;
 use --local, --global, --v1, or --v2 to choose explicitly. If pnpm reports
 ERR_PNPM_IGNORED_BUILDS, approve the package once with pnpm approve-builds
 @frontendxlab/opencode-computer-use, or run pnpm exec
-opencode-computer-use-setup manually. CI environments skip setup. Permission
-onboarding is intentionally not run during postinstall. Run it explicitly with
-npx opencode-computer-use-permissions or pnpm exec
-opencode-computer-use-permissions. macOS can launch onboarding, Linux reports
-AT-SPI requirements, and Windows reports UI Automation requirements.
+opencode-computer-use-setup manually. CI environments skip setup. From v0.1.5, desktop onboarding runs during postinstall when lifecycle scripts are allowed.
+The installer invokes opencode-computer-use-permissions --install. macOS runs
+doctor and opens native Accessibility/Screen Recording onboarding when needed;
+the user must still approve protected TCC toggles. GNOME Linux best-effort
+enables toolkit accessibility before AT-SPI/session diagnostics. Windows checks
+UI Automation and the signed-in interactive desktop. Rerun manually with
+npx opencode-computer-use-permissions --strict.
 OpenCode 1 (opencode.json or opencode.jsonc, plugin list):
   { "$schema": "https://opencode.ai/config.json",
     "plugin": [["@frontendxlab/opencode-computer-use", { "backend": "auto" }]] }
@@ -114,6 +116,18 @@ and Screen Recording permissions; Linux AT-SPI plus required input and
 capture services; Windows UI Automation in the interactive desktop session.
 The plugin cannot control lock screens, login screens, UAC secure desktops,
 or other OS-owned consent surfaces, and does not bypass permissions.
+Install-time desktop onboarding:
+- macOS 14+: postinstall runs doctor. If Accessibility or Screen Recording is
+  missing, Open Computer Use.app opens its onboarding and System Settings.
+  Manual panes: open x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility
+  and open x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture.
+  Apple still requires the user to approve the protected toggles.
+- Linux: postinstall checks the signed-in AT-SPI2/D-Bus desktop session. On
+  GNOME it best-effort runs: gsettings set org.gnome.desktop.interface
+  toolkit-accessibility true. Wayland capture/coordinate input is compositor-dependent.
+- Windows: there is no separate UI Automation permission toggle. Run in the
+  signed-in interactive desktop session, then verify with open-computer-use call list_apps.
+Rerun the cross-platform helper with: npx opencode-computer-use-permissions --strict.
 Packaged native targets: darwin-arm64, darwin-x64, linux-arm64, linux-x64,
 win32-arm64, win32-x64. CI is configured to exercise the adapter on Linux,
 macOS, and Windows without a graphical desktop. Validation status: Linux x64 read-only discovery,

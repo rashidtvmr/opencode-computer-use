@@ -61,7 +61,7 @@
           "name": "OpenCode Computer Use",
           "description": "A dual-generation OpenCode plugin for local desktop control through a persistent cua_repl JavaScript session.",
           "url": "https://opencode-computer-use.pages.dev/",
-          "softwareVersion": "0.1.4",
+          "softwareVersion": "0.1.5",
           "datePublished": "2026-09-25",
           "dateModified": "2026-09-27",
           "isAccessibleForFree": true,
@@ -491,7 +491,7 @@ npm install</code></pre><button class="copy" type="button" data-copy="#clone">Co
 # pnpm install @frontendxlab/opencode-computer-use also works</code></pre><button class="copy" type="button" data-copy="#npm-install">Copy</button></div>
           <p>The package postinstall step detects OpenCode 1 versus OpenCode2 and local versus global installation. It edits JSONC without discarding comments, avoids duplicate entries, and prints both manual formats when the choice is ambiguous. Run it explicitly with <code>npx opencode-computer-use-setup</code>, or add <code>--local</code>, <code>--global</code>, <code>--v1</code>, or <code>--v2</code> when you want to choose explicitly.</p>
           <p>Recent pnpm releases can require explicit lifecycle-script approval. If pnpm reports <code>ERR_PNPM_IGNORED_BUILDS</code>, run <code>pnpm approve-builds @frontendxlab/opencode-computer-use</code> once, then rerun <code>pnpm install</code>. If scripts are disabled, run <code>pnpm exec opencode-computer-use-setup</code> manually. CI environments skip setup automatically.</p>
-          <p>Permission onboarding is intentionally explicit rather than a postinstall side effect. Run <code>npx opencode-computer-use-permissions</code> or <code>pnpm exec opencode-computer-use-permissions</code> after installation. macOS can launch Accessibility and Screen Recording onboarding, Linux reports AT-SPI requirements, and Windows reports UI Automation requirements. Permissions are never changed automatically.</p>
+          <p><strong>Desktop onboarding is part of installation from v0.1.5.</strong> When package lifecycle scripts are allowed, <code>postinstall</code> first configures OpenCode and then runs <code>opencode-computer-use-permissions --install</code>. On macOS it runs the native doctor and opens the Open Computer Use permission onboarding when Accessibility or Screen Recording is missing; Apple still requires you to approve the protected toggles. On GNOME Linux it best-effort enables toolkit accessibility before the AT-SPI/session check. Windows validates that UI Automation is running in an interactive signed-in desktop session. Set <code>OPENCODE_COMPUTER_USE_SKIP_PERMISSIONS=1</code> to opt out.</p>
           <div class="tabs" role="tablist" aria-label="OpenCode generation">
             <button role="tab" id="tab-v1" aria-controls="panel-v1" aria-selected="true">OpenCode 1</button>
             <button role="tab" id="tab-v2" aria-controls="panel-v2" aria-selected="false" tabindex="-1">OpenCode2</button>
@@ -930,6 +930,75 @@ nodeRepl.write(state);</code></pre><button class="copy" type="button" data-copy=
             </tbody>
           </table>
           <p>macOS generally needs Accessibility and Screen Recording. Windows needs UI Automation in the interactive desktop session. Linux needs AT-SPI plus the native runtime's input and capture services. A secure desktop, lock screen, UAC surface, or missing permission is not bypassed.</p>
+          <h3>Installation walks you through desktop access.</h3>
+          <p>The v0.1.5+ npm/pnpm install path runs the same desktop prerequisite helper automatically. It checks the current OS, runs the native <code>doctor</code>, and gives platform-specific guidance. The helper can enable non-protected settings such as GNOME toolkit accessibility, but it never bypasses protected OS consent. On macOS, the native onboarding opens the correct System Settings panes and waits for you to approve <strong>Open Computer Use.app</strong> — not Terminal or OpenCode.</p>
+          <div class="note"><strong>Why there is still a manual step on macOS:</strong> Accessibility and Screen Recording are TCC-protected permissions. Apple does not provide a supported command that silently grants them to an ordinary npm package. Our installer automates detection, opens onboarding, opens the correct Settings destination, and verifies the result; the final privacy toggle remains yours to approve.</div>
+          <h3>Manual permission and verification commands.</h3>
+          <div class="tabs os-permission-tabs" role="tablist" aria-label="Operating-system permission commands">
+            <button role="tab" id="tab-os-macos" aria-controls="panel-os-macos" aria-selected="true">macOS</button>
+            <button role="tab" id="tab-os-linux" aria-controls="panel-os-linux" aria-selected="false" tabindex="-1">Linux</button>
+            <button role="tab" id="tab-os-windows" aria-controls="panel-os-windows" aria-selected="false" tabindex="-1">Windows</button>
+          </div>
+          <div id="panel-os-macos" role="tabpanel" aria-labelledby="tab-os-macos">
+            <p>macOS 14+ requires Accessibility and Screen Recording for <strong>Open Computer Use.app</strong>. The first command is the same checker used by installation.</p>
+            <div class="code"><pre><code id="permissions-macos"># Run/re-run our guided installer check
+npx opencode-computer-use-permissions --strict
+
+# Native status + onboarding UI
+open-computer-use doctor
+
+# Open the exact System Settings panes manually if needed
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture"
+
+# Verify after approving both toggles
+open-computer-use doctor
+open-computer-use call list_apps</code></pre><button class="copy" type="button" data-copy="#permissions-macos">Copy</button></div>
+            <p class="note">If <code>doctor</code> still reports a missing permission after you enable it, close/reopen the affected app or Open Computer Use and run the check again. Do not use <code>tccutil</code> as a grant command: it can reset consent, not silently approve it.</p>
+          </div>
+          <div id="panel-os-linux" role="tabpanel" aria-labelledby="tab-os-linux" hidden>
+            <p>Linux has no universal permission toggle. The requirement is a signed-in graphical desktop with AT-SPI2/D-Bus. GNOME also exposes a toolkit-accessibility setting that our install helper enables best-effort.</p>
+            <div class="code"><pre><code id="permissions-linux"># Run/re-run our guided installer check
+npx opencode-computer-use-permissions --strict
+
+# Native runtime/session notes
+open-computer-use doctor
+
+# GNOME only: manually enable and verify toolkit accessibility
+gsettings set org.gnome.desktop.interface toolkit-accessibility true
+gsettings get org.gnome.desktop.interface toolkit-accessibility
+
+# Inspect the session the runtime inherited
+printf "desktop=%s  session=%s\n" "$XDG_CURRENT_DESKTOP" "$XDG_SESSION_TYPE"
+test -n "$DBUS_SESSION_BUS_ADDRESS" && echo "D-Bus session available" || echo "D-Bus session not exported; runtime will try discovery"
+
+# Verify real desktop visibility
+open-computer-use call list_apps</code></pre><button class="copy" type="button" data-copy="#permissions-linux">Copy</button></div>
+            <p class="note">On Wayland, AT-SPI semantic actions can work while screenshots or coordinate input remain compositor-dependent. If a workflow needs reliable coordinate injection, X11 may behave more predictably; otherwise prefer element-index actions and verify state after every mutation.</p>
+          </div>
+          <div id="panel-os-windows" role="tabpanel" aria-labelledby="tab-os-windows" hidden>
+            <p>Windows UI Automation does not have a separate privacy permission switch. The important requirement is that OpenCode/Open Computer Use runs in the signed-in user desktop rather than a Windows service or session 0.</p>
+            <div class="code"><pre><code id="permissions-windows"># PowerShell
+npx opencode-computer-use-permissions --strict
+open-computer-use doctor
+
+# Confirm this shell belongs to an interactive user session
+Write-Host "SESSIONNAME=$env:SESSIONNAME"
+(Get-Process -Id $PID).SessionId
+
+# Verify UI Automation can see desktop applications
+open-computer-use call list_apps</code></pre><button class="copy" type="button" data-copy="#permissions-windows">Copy</button></div>
+            <p class="note">A normal process cannot automate the UAC secure desktop. Elevated target applications can also be restricted from a lower-integrity automation process. Prefer ordinary user-session apps and keep OpenCode at the same integrity level as the target when automation is required.</p>
+          </div>
+          <h3>How to turn conditional actions into reliable ones.</h3>
+          <ul class="cards">
+            <li><strong>Fix the host first</strong><span>Run the guided permission check and make sure the native runtime can actually list the target app before debugging clicks or typing.</span></li>
+            <li><strong>Prefer semantic actions</strong><span>Use a fresh accessibility element index for click, scroll, set-value, and secondary actions. This is more portable than remembered coordinates.</span></li>
+            <li><strong>Observe after mutations</strong><span>Read a new accessibility state after navigation, dialogs, rerenders, or an uncertain timeout. Never assume a reported input event changed the UI.</span></li>
+            <li><strong>Use screenshots as a fallback</strong><span>When the accessibility tree is incomplete, a screenshot can recover visual context if the OS capture backend permits it.</span></li>
+            <li><strong>Opt into pointer fallback only when needed</strong><span><code>allowGlobalPointerFallbacks</code> can recover coordinate-only cases, but it may move the real pointer or change focus and stays off by default.</span></li>
+            <li><strong>Choose the right Linux session</strong><span>AT-SPI works best when the process can reach the logged-in desktop bus. Wayland may restrict capture/input; semantic actions are the preferred path.</span></li>
+          </ul>
           <div class="note"><strong>Current Linux finding:</strong> on a GNOME Wayland session, Chrome exposed a pseudo-window with no actionable AT-SPI children. The native runtime accepted some synthetic events without changing the window. The adapter reports that result honestly; it does not turn a no-op into a success claim.</div>
         </section>
 
@@ -1026,23 +1095,26 @@ nodeRepl.write(state);</code></pre><button class="copy" type="button" data-copy=
       });
     });
 
-    const tabs = [...document.querySelectorAll('[role="tab"]')];
-    const selectTab = (tab) => {
-      tabs.forEach((item) => {
-        const active = item === tab;
-        item.setAttribute("aria-selected", String(active));
-        item.tabIndex = active ? 0 : -1;
-        document.querySelector(`#${item.getAttribute("aria-controls")}`).hidden = !active;
-      });
-      tab.focus();
-    };
-    tabs.forEach((tab, index) => {
-      tab.addEventListener("click", () => selectTab(tab));
-      tab.addEventListener("keydown", (event) => {
-        if (event.key === "ArrowRight") selectTab(tabs[(index + 1) % tabs.length]);
-        if (event.key === "ArrowLeft") selectTab(tabs[(index - 1 + tabs.length) % tabs.length]);
-        if (event.key === "Home") selectTab(tabs[0]);
-        if (event.key === "End") selectTab(tabs.at(-1));
+    document.querySelectorAll('[role="tablist"]').forEach((tabList) => {
+      const tabs = [...tabList.querySelectorAll('[role="tab"]')];
+      const selectTab = (tab) => {
+        tabs.forEach((item) => {
+          const active = item === tab;
+          item.setAttribute("aria-selected", String(active));
+          item.tabIndex = active ? 0 : -1;
+          const panel = document.getElementById(item.getAttribute("aria-controls"));
+          if (panel) panel.hidden = !active;
+        });
+        tab.focus();
+      };
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => selectTab(tab));
+        tab.addEventListener("keydown", (event) => {
+          if (event.key === "ArrowRight") selectTab(tabs[(index + 1) % tabs.length]);
+          if (event.key === "ArrowLeft") selectTab(tabs[(index - 1 + tabs.length) % tabs.length]);
+          if (event.key === "Home") selectTab(tabs[0]);
+          if (event.key === "End") selectTab(tabs.at(-1));
+        });
       });
     });
 

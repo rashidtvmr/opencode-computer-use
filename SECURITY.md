@@ -28,8 +28,12 @@ sandbox.
   conflicting or malformed configuration. Ambiguous setup is non-destructive
   and prints manual instructions. CI and explicit skip environments bypass
   postinstall mutation.
-- The permission command delegates to the native runtime's `doctor` flow. It
-  may open macOS onboarding, but it never grants or changes permissions.
+- Install-time permission onboarding is guided and best-effort. The postinstall
+  hook delegates to the native runtime's `doctor` flow. On macOS it may open
+  Accessibility/Screen Recording onboarding, but the protected TCC toggles still
+  require user approval. On GNOME Linux it may enable toolkit accessibility.
+  Windows only validates UI Automation/session requirements. The installer never
+  bypasses OS permission boundaries or grants protected permissions silently.
 
 ## Operator responsibilities
 

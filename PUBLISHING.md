@@ -24,7 +24,10 @@ npm pack --dry-run
 ```
 
 `prepublishOnly` runs `lint` plus `test` automatically on `npm publish`.
-Both pass headless (43 tests, no desktop session needed).
+Both pass headless (44 tests, no desktop session needed).
+The same adapter suite is configured to run in CI on Linux, macOS, and Windows.
+Reference checkouts under tmp/ are intentionally outside the package test entrypoint.
+For native desktop certification, follow `docs/NATIVE_VALIDATION.md`.
 
 ## 2. Version
 
@@ -66,10 +69,18 @@ optional dependency and is not bundled into this package.
   platforms without its native binaries still succeed.
 - The `postinstall` setup is best-effort. It never fails the package install;
   ambiguous detection prints manual V1/V2 instructions and leaves config alone.
-  It also runs the native permission check, which never changes permissions.
-  CI environments skip the hook.
+  It then runs guided desktop onboarding through
+  `opencode-computer-use-permissions --install`. On macOS this may open the
+  native Accessibility/Screen Recording onboarding; GNOME Linux best-effort
+  enables toolkit accessibility; Windows validates interactive-session requirements.
+  Protected OS permissions are never bypassed or silently granted.
+  CI environments skip the setup/onboarding hook.
   pnpm 10 and newer may require `pnpm approve-builds @frontendxlab/opencode-computer-use` before lifecycle scripts are allowed.
 - `engines` requires Node >= 18 and supports the OpenCode2 beta line.
+- Cross-platform CI is a portability gate for the adapter only. A release should
+  not claim native desktop certification for an OS until its accessibility,
+  screenshot, focus, keyboard, and pointer smoke checks have run on a real
+  interactive host for that OS.
 - Docs site (Cloudflare Pages, https://opencode-computer-use.pages.dev/)
   deploys separately and is not part of the release flow.
 - Never commit or publish `.env` files or credentials.
