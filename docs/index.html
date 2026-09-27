@@ -93,7 +93,7 @@
           "headline": "OpenCode Computer Use: Codex-style desktop control for OpenCode",
           "description": "Setup, API, security, operating-system, and troubleshooting guidance for the OpenCode Computer Use plugin.",
           "datePublished": "2026-09-25",
-          "dateModified": "2026-09-25",
+          "dateModified": "2026-09-27",
           "url": "https://opencode-computer-use.pages.dev/",
           "inLanguage": "en",
           "articleSection": "Developer tools",
@@ -1020,12 +1020,117 @@ open-computer-use call list_apps</code></pre><button class="copy" type="button" 
 
         <section id="troubleshooting" data-section>
           <h2>When the session is quiet.</h2>
-          <details><summary><code>cua_repl</code> is not listed</summary><p>Check that the plugin path is in the active OpenCode generation's configuration, restart the TUI, and run <code>opencode mcp list</code>. Do not register the same plugin and MCP server twice.</p></details>
+          <p>Start with the same three checks on every platform. They separate plugin registration problems from native desktop permission/session problems before you retry an action.</p>
+          <div class="code"><pre><code id="troubleshooting-first-checks">opencode mcp list
+npx opencode-computer-use-permissions --strict
+open-computer-use call list_apps</code></pre><button class="copy" type="button" data-copy="#troubleshooting-first-checks">Copy</button></div>
+
+          <h3>Permission failures by operating system.</h3>
+          <div class="tabs troubleshooting-os-tabs" role="tablist" aria-label="Permission troubleshooting by operating system">
+            <button role="tab" id="tab-trouble-macos" aria-controls="panel-trouble-macos" aria-selected="true">macOS</button>
+            <button role="tab" id="tab-trouble-linux" aria-controls="panel-trouble-linux" aria-selected="false" tabindex="-1">Linux</button>
+            <button role="tab" id="tab-trouble-windows" aria-controls="panel-trouble-windows" aria-selected="false" tabindex="-1">Windows</button>
+          </div>
+
+          <div id="panel-trouble-macos" role="tabpanel" aria-labelledby="tab-trouble-macos">
+            <details open>
+              <summary><code>doctor</code> says Accessibility is missing</summary>
+              <p><strong>Likely cause:</strong> <strong>Open Computer Use.app</strong> has not been approved in Privacy &amp; Security → Accessibility, or the permission was granted to Terminal/OpenCode instead of the app-agent that performs the real automation.</p>
+              <p><strong>Fix:</strong> run <code>open-computer-use doctor</code>, use the onboarding UI, or open the Accessibility pane directly. Enable <strong>Open Computer Use</strong>, then restart the Open Computer Use app-agent/OpenCode and rerun <code>doctor</code>.</p>
+              <div class="code"><pre><code id="trouble-macos-accessibility">open-computer-use doctor
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+open-computer-use doctor</code></pre><button class="copy" type="button" data-copy="#trouble-macos-accessibility">Copy</button></div>
+            </details>
+            <details>
+              <summary>Screenshots are missing or <code>screenRecording=missing</code></summary>
+              <p><strong>Likely cause:</strong> Screen Recording / Screen &amp; System Audio Recording has not been granted to <strong>Open Computer Use.app</strong>, or the already-running app-agent has not picked up the new TCC grant yet.</p>
+              <p><strong>Fix:</strong> approve Open Computer Use in the Screen Recording pane, then quit/reopen the app-agent or restart OpenCode before checking again. Accessibility text can still work while screenshots are unavailable.</p>
+              <div class="code"><pre><code id="trouble-macos-screen">open "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture"
+open-computer-use doctor
+open-computer-use call list_apps</code></pre><button class="copy" type="button" data-copy="#trouble-macos-screen">Copy</button></div>
+            </details>
+            <details>
+              <summary>System Settings shows permission granted, but onboarding still says Allow</summary>
+              <p><strong>Likely cause:</strong> stale TCC/app-agent state, an old installed copy, or a development build with a different signing identity/path.</p>
+              <p><strong>Fix:</strong> first restart Open Computer Use and rerun <code>doctor</code>. Confirm you approved the current <strong>Open Computer Use.app</strong>, not <strong>Open Computer Use (Dev)</strong> or Terminal. As a last-resort reset, remove only this app's stored consent and let <code>doctor</code> request it again. These commands <em>reset</em> permission; they do not grant it.</p>
+              <div class="code"><pre><code id="trouble-macos-reset">tccutil reset Accessibility com.ifuryst.opencomputeruse
+tccutil reset ScreenCapture com.ifuryst.opencomputeruse
+open-computer-use doctor</code></pre><button class="copy" type="button" data-copy="#trouble-macos-reset">Copy</button></div>
+            </details>
+            <details>
+              <summary>The native binary will not start even after granting permissions</summary>
+              <p><strong>Likely cause:</strong> macOS is older than the native runtime's minimum supported version. Permission changes cannot fix binary compatibility.</p>
+              <p><strong>Fix:</strong> check the OS version. The current macOS runtime requires macOS 14 or newer.</p>
+              <div class="code"><pre><code id="trouble-macos-version">sw_vers -productVersion
+open-computer-use --version</code></pre><button class="copy" type="button" data-copy="#trouble-macos-version">Copy</button></div>
+            </details>
+          </div>
+
+          <div id="panel-trouble-linux" role="tabpanel" aria-labelledby="tab-trouble-linux" hidden>
+            <details open>
+              <summary><code>list_apps</code> is empty or AT-SPI cannot see desktop apps</summary>
+              <p><strong>Likely cause:</strong> the command is running outside the signed-in graphical session, toolkit accessibility is disabled, or the process cannot reach the user's D-Bus/AT-SPI session.</p>
+              <p><strong>Fix:</strong> run OpenCode from the logged-in desktop user, not a pure SSH shell, service, CI job, or unrelated user session. On GNOME, enable toolkit accessibility and verify the session variables. The native runtime also tries to discover missing session variables automatically.</p>
+              <div class="code"><pre><code id="trouble-linux-atspi">gsettings set org.gnome.desktop.interface toolkit-accessibility true
+gsettings get org.gnome.desktop.interface toolkit-accessibility
+printf "desktop=%s  session=%s\n" "$XDG_CURRENT_DESKTOP" "$XDG_SESSION_TYPE"
+printf "runtime=%s\n" "$XDG_RUNTIME_DIR"
+test -n "$DBUS_SESSION_BUS_ADDRESS" &amp;&amp; echo "D-Bus session available"
+open-computer-use doctor
+open-computer-use call list_apps</code></pre><button class="copy" type="button" data-copy="#trouble-linux-atspi">Copy</button></div>
+            </details>
+            <details>
+              <summary>Screenshot is black, omitted, or unavailable on Wayland</summary>
+              <p><strong>Likely cause:</strong> the compositor blocks the runtime's best-effort capture path. This is not an AT-SPI permission toggle and there is no universal Linux command that grants unrestricted screen capture.</p>
+              <p><strong>Fix:</strong> continue with accessibility text/semantic actions when possible. If the workflow requires reliable coordinate/screenshot automation, test the same workflow in an X11 session or a compositor/environment whose capture path works for the runtime.</p>
+            </details>
+            <details>
+              <summary>Click/type/drag reports success but the application does not change</summary>
+              <p><strong>Likely cause:</strong> AT-SPI exposed a pseudo-window or incomplete action tree, or Wayland rejected synthetic coordinate/key input. A native event being accepted does not prove the application consumed it.</p>
+              <p><strong>Fix:</strong> take a fresh state, prefer element-index accessibility actions, <code>setValue</code>, and advertised secondary actions over coordinates. Verify state after every mutation. If only coordinate synthesis is failing, compare the same workflow under X11 before treating it as an adapter bug.</p>
+            </details>
+            <details>
+              <summary>Error mentions <code>Accessible.is_text</code> or <code>is_editable_text</code></summary>
+              <p><strong>Likely cause:</strong> an older Linux native runtime is using PyGObject helpers that are not available on that distribution.</p>
+              <p><strong>Fix:</strong> update/reinstall the current native runtime. The current package line detects AT-SPI <code>Text</code>/<code>EditableText</code> through standard interfaces.</p>
+              <div class="code"><pre><code id="trouble-linux-upgrade">npm install open-computer-use@0.3.5
+open-computer-use --version
+open-computer-use call list_apps</code></pre><button class="copy" type="button" data-copy="#trouble-linux-upgrade">Copy</button></div>
+            </details>
+          </div>
+
+          <div id="panel-trouble-windows" role="tabpanel" aria-labelledby="tab-trouble-windows" hidden>
+            <details open>
+              <summary><code>list_apps</code> is empty even though <code>doctor</code> runs</summary>
+              <p><strong>Likely cause:</strong> Open Computer Use is running in a service, session 0, detached SSH context, or another non-interactive session. UI Automation only sees windows in the signed-in interactive desktop.</p>
+              <p><strong>Fix:</strong> start OpenCode/Open Computer Use from the user's normal desktop session and confirm the current PowerShell process has a user session ID.</p>
+              <div class="code"><pre><code id="trouble-windows-session">open-computer-use doctor
+Write-Host "SESSIONNAME=$env:SESSIONNAME"
+(Get-Process -Id $PID).SessionId
+open-computer-use call list_apps</code></pre><button class="copy" type="button" data-copy="#trouble-windows-session">Copy</button></div>
+            </details>
+            <details>
+              <summary>The target app is elevated and clicks/typing fail</summary>
+              <p><strong>Likely cause:</strong> Windows integrity-level boundaries can block a normal process from driving a higher-integrity application.</p>
+              <p><strong>Fix:</strong> prefer running the target as a normal user. If automation genuinely requires an elevated target, run the automation host at the same integrity level only for that explicit task and keep the elevated session narrow.</p>
+            </details>
+            <details>
+              <summary>A UAC prompt, lock screen, or sign-in screen cannot be controlled</summary>
+              <p><strong>Cause:</strong> these are Windows secure-desktop / OS-owned surfaces. This is an intentional security boundary, not a missing UI Automation permission.</p>
+              <p><strong>Fix:</strong> approve or dismiss the UAC prompt manually and return to the normal user desktop. The plugin will not attempt to bypass the secure desktop.</p>
+            </details>
+            <details>
+              <summary>App is found but an action does nothing</summary>
+              <p><strong>Likely cause:</strong> the app does not expose the expected UI Automation pattern or ignores the Win32 message fallback while backgrounded/hidden.</p>
+              <p><strong>Fix:</strong> make sure the target has a visible, non-minimized top-level window, refresh the accessibility state, and prefer semantic element actions over coordinates. Verify the resulting state instead of trusting the input call alone.</p>
+            </details>
+          </div>
+
+          <h3>General failures.</h3>
+          <details><summary><code>cua_repl</code> is not listed</summary><p>Check that the plugin path/package is in the active OpenCode generation's configuration, restart the TUI/service, and run <code>opencode mcp list</code>. Do not register the same plugin and MCP server twice.</p></details>
           <details><summary>Node cannot be found</summary><p>Set <code>OPENCODE_NODE</code> to an absolute Node executable before starting OpenCode, or make <code>node</code> available on the server PATH.</p></details>
-          <details><summary>Permission onboarding needs to be rerun</summary><p>Run <code>opencode-computer-use-permissions</code>. On macOS it can reopen Accessibility and Screen Recording onboarding; Linux and Windows print the relevant runtime requirements.</p></details>
-          <details><summary>The app list is empty</summary><p>Run <code>opencode-computer-use-permissions</code>, then <code>open-computer-use list-apps</code> in the same graphical session. Confirm the app is already running and that the desktop accessibility session is available.</p></details>
-          <details><summary>Screenshots are unavailable</summary><p>Screen capture depends on the OS compositor and permissions. The plugin can still provide bounded accessibility text when capture is unavailable.</p></details>
-          <details><summary>Linux input returns success but nothing changes</summary><p>Check the desktop session type and native runtime prerequisites. A pseudo-window or Wayland compositor can expose state without accepting synthetic input. Observe again before retrying a mutating action.</p></details>
+          <details><summary>The app is not found</summary><p>Run <code>open-computer-use call list_apps</code>, use the exact returned app name or ID, and confirm the app already has a visible, non-minimized window in the same graphical session.</p></details>
+          <details><summary>Element index stopped working after navigation</summary><p>Element indexes belong to a particular accessibility snapshot. Fetch a fresh state after navigation, dialogs, rerenders, or focus changes before acting again.</p></details>
           <details><summary>Global pointer fallback is rejected</summary><p>This is the expected safety gate. Enable <code>allowGlobalPointerFallbacks</code> only for an explicit diagnostic session where moving the real pointer and changing focus are acceptable.</p></details>
         </section>
 
@@ -1048,7 +1153,7 @@ open-computer-use call list_apps</code></pre><button class="copy" type="button" 
         <strong>Default policy</strong>
         <p>Local stdio only. Global pointer fallback off. Native OS permissions enforced. Read-only and app policies are available as adapter defense in depth.</p>
         <strong>Updated</strong>
-        <p>Published September 25, 2026. Updated September 25, 2026.</p>
+        <p>Published September 25, 2026. Updated September 27, 2026.</p>
         <strong>WebMCP</strong>
         <p>Preview support registers read-only documentation tools when the browser exposes the WebMCP API. Normal browsers remain fully supported.</p>
         <strong>Repository</strong>

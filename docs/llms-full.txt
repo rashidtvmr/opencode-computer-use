@@ -159,12 +159,44 @@ before high-risk use. Manual read-only checks before acting:
   @frontendxlab/opencode-computer-use if the package was installed before
   automatic setup was available.
 - Node not found: set OPENCODE_NODE or fix server PATH.
-- Empty app list: run open-computer-use list-apps in the same graphical
-  session; confirm the app runs and desktop accessibility is available.
-- Screenshots unavailable: OS compositor or permission gap; bounded
+- macOS Accessibility missing: grant Accessibility to Open Computer Use.app,
+  not Terminal/OpenCode, restart the app-agent, then rerun doctor. Open the pane
+  with: open x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility.
+- macOS Screen Recording missing: grant Open Computer Use.app in Screen &
+  System Audio Recording, restart the app-agent, then rerun doctor. Open the
+  pane with: open x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture.
+- macOS stale permission state: first restart Open Computer Use and verify the
+  correct release app is approved. Last-resort resets are:
+  tccutil reset Accessibility com.ifuryst.opencomputeruse
+  tccutil reset ScreenCapture com.ifuryst.opencomputeruse
+  These reset consent and require the user to approve it again; they do not grant it.
+- macOS native binary will not start: verify sw_vers -productVersion; current
+  native macOS runtime requires macOS 14+ and permissions cannot fix an older OS.
+- Linux empty app list / AT-SPI unavailable: run from the logged-in graphical
+  desktop session, enable GNOME toolkit accessibility with
+  gsettings set org.gnome.desktop.interface toolkit-accessibility true, verify
+  D-Bus/session variables, then rerun open-computer-use call list_apps.
+- Linux Wayland screenshot black/omitted: compositor capture restriction; use
+  semantic accessibility state/actions or test the workflow in an X11 session
+  when reliable coordinate/screenshot automation is required.
+- Linux action reports success but nothing changes: fetch a fresh state and
+  prefer element-index AT-SPI actions/set-value/secondary actions. Coordinate
+  and key synthesis are best-effort under Wayland.
+- Linux Accessible.is_text/is_editable_text error: upgrade/reinstall the current
+  open-computer-use native runtime, which uses standard AT-SPI interfaces.
+- Windows empty app list: run inside the signed-in interactive desktop, not a
+  Windows service, session 0, detached SSH context, or unrelated user session.
+- Windows elevated target: UI Automation/input can be blocked by integrity
+  boundaries. Prefer a normal-user target; match integrity level only when the
+  explicit task truly requires elevation.
+- Windows UAC/lock/sign-in screen: intentionally unsupported secure-desktop/OS
+  surfaces; approve/dismiss manually and return to the normal desktop.
+- Windows app found but action does nothing: keep a visible non-minimized window,
+  refresh state, prefer semantic UIA actions, and verify the result after input.
+- Empty app list generally: run open-computer-use call list_apps in the same
+  graphical session; confirm the app is visible and desktop accessibility is available.
+- Screenshots unavailable generally: OS compositor or permission gap; bounded
   accessibility text may still work.
-- Linux input returns success but nothing changes: session type or missing
-  runtime prerequisite; observe again before retrying mutating actions.
 - Global pointer fallback rejected: expected safety gate.
 
 10. WebMCP preview

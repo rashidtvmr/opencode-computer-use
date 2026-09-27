@@ -11,6 +11,7 @@
 - [OS support](https://opencode-computer-use.pages.dev/#os)
 - [WebMCP preview](https://opencode-computer-use.pages.dev/#webmcp)
 - [Security](https://opencode-computer-use.pages.dev/#security)
+- [Troubleshooting](https://opencode-computer-use.pages.dev/#troubleshooting)
 - [FAQ](https://opencode-computer-use.pages.dev/#faq)
 
 ## Repo
